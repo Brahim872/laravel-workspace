@@ -18,12 +18,13 @@ class Invite extends Model
 
     public function generateInvitationToken()
     {
-        $this->token = substr(md5(rand(0, 9) . $this->email . time()), 0, 32);
+        $this->token =  substr(md5(rand(0, 9) . $this->email . time()), 0, 32);
     }
 
     public function getLink()
     {
-        return urldecode(env('FRONTEND_URL') . '/register' . '?token=' . $this->token . 'email=' . $this->email);
+
+        return urldecode(env('FRONTEND_URL') . '/register' . '?token=' . $this->token . '&email=' . $this->email);
     }
 
     public function hasAleardyInvitation()

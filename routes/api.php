@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('guest')->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-        ->middleware([/*'check.token',*/'verified'])
+        ->middleware(['check.token','verified'])
         ->name('login');
 
 
@@ -69,10 +69,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('hasWorkspace')
         ->name('workspace');
 
+
+    Route::post('invitation/accept', [InviteController::class,'accept'])
+        ->name('acceptInvitation');
+
 });
 
 //workspace
-Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('{workspace}')->group(function () {
+Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{workspace}')->group(function () {
 
     Route::post('invitation', [InviteController::class,'store'])
         ->name('storeInvitation');

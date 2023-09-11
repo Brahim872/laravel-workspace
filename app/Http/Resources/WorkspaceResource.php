@@ -37,6 +37,7 @@ class WorkspaceResource extends JsonResource
 
                 $result[] = [
                     'id' => $workspace->id,
+                    'slug' => $workspace->slug,
                     'name' => $workspace->name,
                     'type_user' => User::TYPE_USER[$workspace->pivot->type_user],
 //                    'created_at' => $workspace->created_at,
@@ -49,6 +50,7 @@ class WorkspaceResource extends JsonResource
             $typeUser = $this->users->first()->pivot->type_user;
             $result = [
                 'id' => $this->id,
+                'slug' => $this->slug,
                 'name' => $this->name,
                 'type_user' => User::TYPE_USER[$typeUser],
 //                'created_at' => $this->created_at,

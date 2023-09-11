@@ -120,6 +120,7 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
+        'css' => true, // Make sure this is set to true
     ],
 
 ];
