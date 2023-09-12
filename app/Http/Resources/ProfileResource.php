@@ -2,11 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InvitationResource extends JsonResource
+class ProfileResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,18 +14,14 @@ class InvitationResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $token = null;
-
-//        if ($request->route()->uri() == "api/login") {
-//            $token = $this->createToken('auth-token')->plainTextToken;
-//        }
+        $_workspace = $this->workspaces()->where('workspaces.id', '=', $this->current_workspace)->first();
         return [
-
             'id' => $this->id,
+            'name' => $this->name,
             'email' => $this->email,
-            'token' => $this->token,
-            'workspace' => $this->workspace,
-
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'workspace' => new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user),
         ];
     }
 }

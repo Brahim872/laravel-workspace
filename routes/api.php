@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('guest')->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-        ->middleware(['check.token','verified'])
+        ->middleware(['verified'/*,'check.token'*/])
         ->name('login');
 
 
@@ -69,16 +70,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->middleware('hasWorkspace')
         ->name('workspace');
 
+    Route::post('switch-workspace', [WorkspaceController::class,'change'])
+        ->middleware('hasWorkspace')
+        ->name('workspace.change');
 
-    Route::post('invitation/accept', [InviteController::class,'accept'])
+
+    Route::post('accept-invitation', [InviteController::class,'accept'])
         ->name('acceptInvitation');
+
+    Route::get('profile', [UserController::class,'index'])
+        ->name('getProfile');
 
 });
 
 //workspace
-Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{workspace}')->group(function () {
+Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{id}')->group(function () {
 
     Route::post('invitation', [InviteController::class,'store'])
         ->name('storeInvitation');
+
+
+    Route::post('modify-workspace', [WorkspaceController::class,'update'])
+        ->middleware('hasWorkspace')
+        ->name('workspace.update');
+
 
 });

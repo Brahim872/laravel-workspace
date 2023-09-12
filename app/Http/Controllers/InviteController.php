@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invite;
+use App\Models\User;
 use App\Models\Workspace;
 use App\Notifications\InvitationEmail;
 use Carbon\Carbon;
@@ -26,7 +27,7 @@ class InviteController extends Controller
         ];
     }
 
-    public function store(Request $request, Workspace $workspace)
+    public function store(Request $request, $workspace)
     {
         try {
             $validator = Validator::make($request->all(), $this->rules());
@@ -35,8 +36,18 @@ class InviteController extends Controller
                 return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
             }
 
+            $workspaceRequest = Workspace::find($workspace);
 
-            $request['workspace'] = $workspace->id;
+            $userWorkspace = $workspaceRequest?$workspaceRequest->users((string)User::TYPE_USER['0'])->first():null;
+
+            if(!$workspaceRequest  || !$userWorkspace){
+                return returnResponseJson([
+                    'message' => 'This workspace does not exist '
+                ], Response::HTTP_BAD_REQUEST);
+            }
+            $request['workspace'] = $workspace;
+
+
 
             $invitation = new Invite($request->all());
 
@@ -67,31 +78,44 @@ class InviteController extends Controller
     {
         try {
 
-            $invite = Invite::where('email', '=', $request->email)
+            $me = auth('sanctum')->user();
+
+
+            $invite = Invite::where('email', '=', $me->email)
                 ->where('token', '=', $request->token)
                 ->where('workspace', '=', $request->workspace)
                 ->first();
 
+
             $workspace = Workspace::find($request->workspace);
 
             if (!$invite) {
-                return returnResponseJson(['message' => 'That credential are not compatible with data'], 500);
+                return returnResponseJson(['message' => 'That credential are not compatible with data'], Response::HTTP_BAD_REQUEST);
             }
 
-            $invite->update(['accepted_at'=>Carbon::now()]);
+            if ($invite->accepted_at) {
+                return returnResponseJson(['message' => 'this invitation has been accepted'], Response::HTTP_ACCEPTED);
+            }
 
 
-            $workspace->users()->detach();
+            $invite->update(['accepted_at' => Carbon::now()]);
+            $me->update(['current_workspace' => $workspace->id]);
 
-            $workspace->users()->attach(returnUserApi()->id,[
-                'type_user' => 1 // = admin
+
+            $me->workspaces()->detach();
+
+            $me->workspaces()->attach($workspace->id, [
+                'type_user' => 1 // = invite
             ]);
 
 
-            return returnResponseJson(['message' => 'The link invitation has been sent'], 200);
+            return returnResponseJson(['message' => 'accept successful'], 200);
 
         } catch (\Exception $e) {
-            return returnResponseJson(['message', $e->getMessage()], 500);
+            return returnResponseJson([
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+            ], 500);
         }
     }
 

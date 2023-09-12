@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\Sanctum;
 
@@ -39,13 +40,20 @@ class AuthenticatedSessionController extends Controller
             }
 
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+
                 auth()->user()->update([
                     'ip_address'=>request()->ip(),
                     'device'=> request()->header('User-Agent'),
                 ]);
-                return returnResponseJson(['user' => new UserResource(auth()->user())], Response::HTTP_OK);
+
+                $token = auth()->user()->createToken('auth-token')->plainTextToken;
+
+                $userResource = new UserResource(auth()->user(),$token);
+
+                return returnResponseJson(['user' => $userResource], Response::HTTP_OK);
             }
-            return returnResponseJson(["error" => "vos informations d'identification ne sont pas correctes."], Response::HTTP_BAD_REQUEST);
+
+            return returnResponseJson(["error" => "That credentials not compatible with data."], Response::HTTP_BAD_REQUEST);
 
         } catch (\Exception $e) {
             return $e->getMessage();

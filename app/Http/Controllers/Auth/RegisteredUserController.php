@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
         ]);
 
 
-        if ($this->validInvitation($request)) {
+        if (!$this->validInvitation($request)) {
             event(new Registered($user));
 
             return returnResponseJson(['message' => 'verification-link-sent'], Response::HTTP_OK);
@@ -61,8 +61,8 @@ class RegisteredUserController extends Controller
             $user->markEmailAsVerified();
 
             return returnResponseJson([
-                'user' => new UserResource($user,true),
-                'invitations' => new InvitationResource(Invite::where('email','=',$user->email)->first()),
+                'user' => new UserResource($user, true),
+                'invitations' => new InvitationResource(Invite::where('email', '=', $user->email)->first()),
             ], Response::HTTP_OK);
         }
 

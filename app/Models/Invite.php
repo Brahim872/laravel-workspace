@@ -12,7 +12,7 @@ class Invite extends Model
     use Notifiable;
 
     protected $fillable = [
-        'email', 'token', 'registered_at', 'workspace'
+        'email', 'token', 'accepted_at', 'workspace'
     ];
 
 
@@ -23,6 +23,10 @@ class Invite extends Model
 
     public function getLink()
     {
+
+        if(User::where('email','=',$this->email)->first()){
+            return urldecode(env('FRONTEND_URL') . '/accept-invitation' . '?token=' . $this->token . '&email=' . $this->email);
+        }
 
         return urldecode(env('FRONTEND_URL') . '/register' . '?token=' . $this->token . '&email=' . $this->email);
     }

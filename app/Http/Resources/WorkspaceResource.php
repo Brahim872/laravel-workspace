@@ -9,12 +9,21 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class WorkspaceResource extends JsonResource
 {
 
+    /**
+     * @var boolean
+     */
     protected $isCollect;
 
-    public function __construct($resource, $isCollect = false)
+    /**
+     * @var int
+     */
+    private $typeUser;
+
+    public function __construct($resource, $isCollect = false, $typeUser = 0)
     {
         parent::__construct($resource);
         $this->isCollect = $isCollect;
+        $this->typeUser = $typeUser;
     }
 
 
@@ -22,7 +31,6 @@ class WorkspaceResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param Request $request
-     * @param bool $isCollect
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -40,24 +48,17 @@ class WorkspaceResource extends JsonResource
                     'slug' => $workspace->slug,
                     'name' => $workspace->name,
                     'type_user' => User::TYPE_USER[$workspace->pivot->type_user],
-//                    'created_at' => $workspace->created_at,
-//                    'payed_at' => $workspace->payed_at,
-//                    'deactivated_at' => $workspace->deactivated_at,
-
                 ];
             }
         } else {
-            $typeUser = $this->users->first()->pivot->type_user;
+
             $result = [
                 'id' => $this->id,
                 'slug' => $this->slug,
                 'name' => $this->name,
-                'type_user' => User::TYPE_USER[$typeUser],
-//                'created_at' => $this->created_at,
-//                'payed_at' => $this->payed_at,
-//                'deactivated_at' => $this->deactivated_at,
-
+                'type_user' => User::TYPE_USER[$this->typeUser],
             ];
+
         }
         return $result;
     }
