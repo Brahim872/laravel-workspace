@@ -103,6 +103,5 @@ class WorkspaceController extends Controller
                 'line' => $e->getLine()
             ], Response::HTTP_BAD_REQUEST);
         }
-
     }
 }

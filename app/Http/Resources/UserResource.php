@@ -32,6 +32,7 @@ class UserResource extends JsonResource
 //            $token = $this->createToken('auth-token')->plainTextToken;
 //        }
         $_workspace = $this->workspaces()->where('workspaces.id', '=', $this->current_workspace)->first();
+
         return [
 //            'id' => $this->id,
 //            'name' => $this->name,
@@ -39,7 +40,7 @@ class UserResource extends JsonResource
 //            'created_at' => $this->created_at,
 //            'updated_at' => $this->updated_at,
             'token' => $this->token,
-            'workspace' => new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user),
+            'workspace' => $_workspace ? new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user): null,
         ];
     }
 }
