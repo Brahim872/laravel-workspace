@@ -6,10 +6,14 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Traits\HasRoles;
 
 class Workspace extends Model
 {
-    use HasFactory, Sluggable;
+    use HasFactory, Sluggable, HasRoles;
+
+    protected $guard_name = 'sanctum';
+
 
     public function sluggable(): array
     {

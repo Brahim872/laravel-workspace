@@ -14,9 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class WorkspaceController extends Controller
 {
-    use CrudTrait;
+//    use CrudTrait;
 
-    protected $prefixName = "workspace";
     protected $model = Workspace::class;
 
 
@@ -32,12 +31,26 @@ class WorkspaceController extends Controller
         return returnResponseJson(['workspaces' => new WorkspaceResource($workspace, true)], 200);
     }
 
-    public function responseStore($saveModel)
+
+    public function store(Request $request)
     {
+        $model = (new $this->model)->create($request->all());
+
+        $model->users()->detach();
+
+        $model->users()->attach(returnUserApi()->id, [
+            'type_user' => 0 // = admin
+        ]);
+
+
+        auth('sanctum')->user()->update(['current_workspace' => $model->id]);
+
         return returnResponseJson([
-            'workspace' => new WorkspaceResource($saveModel)
+            'workspace' => new WorkspaceResource($model)
         ], 200);
     }
+
+
 
     protected function afterSave(array $attributes, $model)
     {
@@ -64,7 +77,7 @@ class WorkspaceController extends Controller
             returnUserApi()->update(['current_workspace' => $request->workspace_id]);
             $workspace = Workspace::find($request->workspace_id);
 
-            if (!$workspace){
+            if (!$workspace) {
                 return returnResponseJson([
                     'message' => 'workspace doesnt exist !',
                 ], Response::HTTP_FORBIDDEN);
@@ -85,10 +98,11 @@ class WorkspaceController extends Controller
     }
 
 
-    public function update(Request $request, $workspace){
+    public function update(Request $request, $workspace)
+    {
         try {
-            $_workspace = Workspace::find($workspace)->update(['name'=>$request->name]);
-            if ($_workspace){
+            $_workspace = Workspace::find($workspace)->update(['name' => $request->name]);
+            if ($_workspace) {
 
                 return returnResponseJson([
                     'message' => 'update workspace has been successful',
@@ -97,7 +111,7 @@ class WorkspaceController extends Controller
                     ]
                 ], Response::HTTP_OK);
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return returnResponseJson([
                 'message' => $e->getMessage(),
                 'line' => $e->getLine()

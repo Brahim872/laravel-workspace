@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\PackController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
@@ -91,8 +92,11 @@ Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{id}')->gr
 
 
     Route::post('modify-workspace', [WorkspaceController::class,'update'])
-        ->middleware('hasWorkspace')
         ->name('workspace.update');
+
+
+    Route::post('pack-workspace', [PackController::class,'store'])
+        ->name('pack.workspace');
 
 
 });

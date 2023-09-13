@@ -20,7 +20,8 @@ class UserTableSeeder extends Seeder
     protected $rows = [
         [
             'id' => 1,
-            'name' => 'admin',
+            'first_name' => 'admin',
+            'last_name' => 'admin',
             'email' => 'admin@email.com',
             'password' => 'admin',
 

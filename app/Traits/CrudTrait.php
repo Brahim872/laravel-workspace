@@ -38,7 +38,6 @@ trait CrudTrait
 
         $attr =  $this->beforeSave($request->except('_token'), (new $this->model));
 
-
         if(isset($attr['errors'])){
 
             return  returnResponseJson([
@@ -65,17 +64,6 @@ trait CrudTrait
      * @return void
      */
     protected function afterSave(array $attributes, $model)
-    {
-
-    }
-    /**
-     * After save Model
-     *
-     * @param array $attributes
-     * @param BaseModel $model
-     * @return void
-     */
-    protected function responseStore($model)
     {
 
     }

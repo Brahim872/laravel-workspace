@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->nullable();
             $table->string('name');
+            $table->string('image')->nullable();
             $table->dateTime('payed_at')->nullable();
             $table->dateTime('deactivated_at')->nullable();
             $table->timestamps();

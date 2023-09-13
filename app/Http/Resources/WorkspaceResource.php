@@ -57,6 +57,7 @@ class WorkspaceResource extends JsonResource
                 'slug' => $this->slug,
                 'name' => $this->name,
                 'type_user' => User::TYPE_USER[$this->typeUser],
+                'role' => new RoleResource($this->roles->first()),
             ];
 
         }
