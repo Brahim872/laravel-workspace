@@ -21,7 +21,7 @@ class hasWorkspace
     public function handle(Request $request, Closure $next): Response
     {
         if (returnUserApi() && returnUserApi()->hasWorkspaces()->count() <= 0) {
-            return  returnResponseJson(['message' => 'you must have a workspace'],409);
+            return  returnResponseJson(['message' => 'you must have a workspace'],Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);

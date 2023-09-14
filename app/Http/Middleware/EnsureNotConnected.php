@@ -43,7 +43,7 @@ class EnsureNotConnected
                     'device' => $user->device,
                     'token' => $token,
                 ]
-            ], 401);
+            ], Response::HTTP_CONFLICT);
         }
 
         return $next($request);

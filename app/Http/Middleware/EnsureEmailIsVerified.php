@@ -24,19 +24,19 @@ class EnsureEmailIsVerified
 
         if (!$user) {
 
-            return returnResponseJson(['message' => 'Your credentials are not compatible.'], Response::HTTP_FORBIDDEN);
+            return returnResponseJson(['message' => 'Your credentials are not compatible.'], Response::HTTP_UNAUTHORIZED);
 
         } else {
             $hashedPasswordFromDatabase = $user->password; // Replace with the hashed password from your database
             if (!Hash::check($passwordToCheck, $hashedPasswordFromDatabase)) {
-                return returnResponseJson(['message' => 'Your credentials are not compatible.'], Response::HTTP_FORBIDDEN);
+                return returnResponseJson(['message' => 'Your credentials are not compatible.'], Response::HTTP_UNAUTHORIZED);
             }
         }
 
         if (!$user ||
             ($user instanceof MustVerifyEmail &&
                 !$user->hasVerifiedEmail())) {
-            return returnResponseJson(['message' => 'Your email address is not verified.'], Response::HTTP_FORBIDDEN);
+            return returnResponseJson(['message' => 'Your email address is not verified.'], Response::HTTP_UNAUTHORIZED);
         }
 
         return $next($request);
