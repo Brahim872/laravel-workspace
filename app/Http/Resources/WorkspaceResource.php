@@ -47,6 +47,7 @@ class WorkspaceResource extends JsonResource
                     'id' => $workspace->id,
                     'slug' => $workspace->slug,
                     'name' => $workspace->name,
+                    'paid_at' => $workspace->paid_at,
                     'type_user' => User::TYPE_USER[$workspace->pivot->type_user],
                 ];
             }
@@ -56,6 +57,7 @@ class WorkspaceResource extends JsonResource
                 'id' => $this->id,
                 'slug' => $this->slug,
                 'name' => $this->name,
+                'paid_at' => $this->paid_at,
                 'type_user' => User::TYPE_USER[$this->typeUser],
                 'role' => new RoleResource($this->roles->first()),
             ];

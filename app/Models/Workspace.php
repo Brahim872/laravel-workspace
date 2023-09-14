@@ -31,7 +31,7 @@ class Workspace extends Model
 
 
     protected $fillable = [
-        'name', 'payed_at', 'deactivated_at'
+        'name', 'paid_at', 'deactivated_at'
     ];
 
     /**

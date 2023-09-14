@@ -23,12 +23,16 @@ class InviteController extends Controller
     public function rules()
     {
         return [
-            'email' => 'required|email'
+            'email' => 'required|array', // Ensure 'emails' is an array
+            'email.*' => 'email',
         ];
     }
 
+
     public function store(Request $request, $workspace)
     {
+
+
         try {
             $validator = Validator::make($request->all(), $this->rules());
 
@@ -38,39 +42,38 @@ class InviteController extends Controller
 
             $workspaceRequest = Workspace::find($workspace);
 
-            $userWorkspace = $workspaceRequest?$workspaceRequest->users((string)User::TYPE_USER['0'])->first():null;
+            $userWorkspace = $workspaceRequest ? $workspaceRequest->users((string)User::TYPE_USER['0'])->first() : null;
 
-            if(!$workspaceRequest  || !$userWorkspace){
+            if (!$workspaceRequest || !$userWorkspace) {
                 return returnResponseJson([
                     'message' => 'This workspace does not exist '
                 ], Response::HTTP_BAD_REQUEST);
             }
             $request['workspace'] = $workspace;
+            foreach ($request->email as $_email) {
 
-
-
-            $invitation = new Invite($request->all());
-
-            if ($invitation->hasAleardyInvitation()) {
-                return returnResponseJson([
-                    'message' => 'Already sent invitation to this email'
-                ], Response::HTTP_BAD_REQUEST);
+                $invitations[] = new Invite([
+                    'email' => $_email,
+                    'workspace' => $request['workspace'],
+                ]);
             }
 
 
-            $invitation->generateInvitationToken();
-            $invitation->save();
-            $link = $invitation->getLink();
+            if ($this->checkInvitation($invitations)[1]) {
+                return returnResponseJson(['message' => 'Already send link to :' . $this->checkInvitation($invitations)[0],
+                    'note'=>'dont sent any invitation. resolve Problem first'], Response::HTTP_BAD_REQUEST);
+            };
 
-            $invitation->notify(new InvitationEmail($link));
+
+            $result = $this->generateNotification($invitations);
 
 
-            if ($invitation) {
+            if ($result) {
                 return returnResponseJson(['message' => 'The link invitation has been sent'], 200);
             }
 
         } catch (\Exception $e) {
-            return returnResponseJson(['message', $e->getMessage()], 500);
+            return returnResponseJson(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -117,6 +120,35 @@ class InviteController extends Controller
                 'line' => $e->getLine(),
             ], 500);
         }
+    }
+
+    private function checkInvitation($invitations)
+    {
+        $emails = "";
+        $error = false;
+
+        foreach ($invitations as $invitation) {
+            if ($invitation->hasAleardyInvitation()) {
+                $emails .= $invitation->email . ',';
+                $error = true;
+            }
+        }
+        return [substr_replace($emails, "", -1), $error];
+    }
+
+    private function generateNotification($invitations)
+    {
+
+        foreach ($invitations as $invitation) {
+
+            $invitation->generateInvitationToken();
+            $invitation->save();
+            $link = $invitation->getLink();
+
+            $invitation->notify(new InvitationEmail($link));
+        }
+        return true;
+
     }
 
 

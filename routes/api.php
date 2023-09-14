@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware('guest')->group(function () {
+Route::middleware(['guest','throttle:6,1'])->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['verified'/*,'check.token'*/])
@@ -41,7 +41,7 @@ Route::middleware('guest')->group(function () {
         ->name('register');
 
     Route::get('/verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-        ->middleware(['signed', 'throttle:6,1'])
+        ->middleware(['signed'])
         ->name('verification.verify');
 
 
@@ -59,7 +59,7 @@ Route::middleware('guest')->group(function () {
 });
 
 //account
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum','throttle:6,1'])->group(function () {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');

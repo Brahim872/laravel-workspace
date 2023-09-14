@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -17,6 +19,19 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
+
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof ThrottleRequestsException) {
+            return returnResponseJson([
+                'message' => 'API rate limit exceeded. Please try again later.'
+            ], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+
+        return parent::render($request, $exception);
+    }
+
 
     /**
      * Register the exception handling callbacks for the application.
