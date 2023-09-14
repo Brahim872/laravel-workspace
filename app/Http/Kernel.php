@@ -66,5 +66,14 @@ class Kernel extends HttpKernel
         'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
         'hasWorkspace' => \App\Http\Middleware\hasWorkspace::class,
         'check.token' => \App\Http\Middleware\EnsureNotConnected::class,
+
+
+        //route
+        'role' => \App\Http\Middleware\RoleMiddleware::class,
+
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
+
+
 }

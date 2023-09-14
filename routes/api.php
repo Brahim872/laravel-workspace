@@ -87,15 +87,18 @@ Route::middleware(['auth:sanctum','throttle:6,1'])->group(function () {
 //workspace
 Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{id}')->group(function () {
 
-    Route::post('invitation', [InviteController::class,'store'])
+    Route::post('send-invitation', [InviteController::class,'store'])
+        ->middleware('role:pack|free')
         ->name('storeInvitation');
 
 
     Route::post('modify-workspace', [WorkspaceController::class,'update'])
+        ->middleware('role:pack|free')
         ->name('workspace.update');
 
 
     Route::post('pack-workspace', [PackController::class,'store'])
+        ->middleware('role:pack|free')
         ->name('pack.workspace');
 
 

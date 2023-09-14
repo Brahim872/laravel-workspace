@@ -42,25 +42,13 @@ class WorkspaceController extends Controller
             'type_user' => 0 // = admin
         ]);
 
+        $model->assignRole($request->pack);
 
         auth('sanctum')->user()->update(['current_workspace' => $model->id]);
 
         return returnResponseJson([
             'workspace' => new WorkspaceResource($model)
         ], 200);
-    }
-
-
-
-    protected function afterSave(array $attributes, $model)
-    {
-        $model->users()->detach();
-
-        $model->users()->attach(returnUserApi()->id, [
-            'type_user' => 0 // = admin
-        ]);
-
-        auth('sanctum')->user()->update(['current_workspace' => $model->id]);
     }
 
 

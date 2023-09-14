@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasWorkspace;
 
     /**
      * The attributes that are mass assignable.
@@ -51,7 +52,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     const TYPE_USER = [
         0 => "admin",
-        1 => "invite" ,
+        1 => "invite",
     ];
     /**
      * @var mixed
@@ -66,12 +67,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         if ($typ != null) {
             return $this->belongsToMany(Workspace::class, 'workspace_user')
-                ->withPivot(['type_user'])->wherePivot('type_user', '=',(int) $typ);
+                ->withPivot(['type_user'])->wherePivot('type_user', '=', (int)$typ);
         }
 
         return $this->belongsToMany(Workspace::class, 'workspace_user')->withPivot(['type_user']);
     }
-
 
 
     /**
@@ -83,7 +83,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 
-
     /**
      * The roles that belong to the user.
      */
@@ -91,7 +90,6 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->workspaces()->get();
     }
-
 
 
     protected static function boot()

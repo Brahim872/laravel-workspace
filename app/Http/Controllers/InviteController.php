@@ -32,7 +32,6 @@ class InviteController extends Controller
     public function store(Request $request, $workspace)
     {
 
-
         try {
             $validator = Validator::make($request->all(), $this->rules());
 
@@ -41,6 +40,12 @@ class InviteController extends Controller
             }
 
             $workspaceRequest = Workspace::find($workspace);
+
+            if(!returnUserApi()->hasWorkspace($workspaceRequest->id)) {
+                return returnResponseJson([
+                    'message' => 'This workspace does not exist '
+                ], Response::HTTP_BAD_REQUEST);
+            }
 
             $userWorkspace = $workspaceRequest ? $workspaceRequest->users((string)User::TYPE_USER['0'])->first() : null;
 
@@ -73,7 +78,11 @@ class InviteController extends Controller
             }
 
         } catch (\Exception $e) {
-            return returnResponseJson(['message' => $e->getMessage()], 500);
+            return returnResponseJson([
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ], 500);
         }
     }
 

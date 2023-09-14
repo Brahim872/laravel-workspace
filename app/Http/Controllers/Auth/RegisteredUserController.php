@@ -61,9 +61,10 @@ class RegisteredUserController extends Controller
         } else {
 
             $user->markEmailAsVerified();
+            $token = $user->createToken('auth-token')->plainTextToken;
 
             return returnResponseJson([
-                'user' => new UserResource($user, true),
+                'user' => new UserResource($user, $token),
                 'invitations' => new InvitationResource(Invite::where('email', '=', $user->email)->first()),
             ], Response::HTTP_OK);
         }

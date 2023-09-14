@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -27,6 +28,11 @@ class Handler extends ExceptionHandler
             return returnResponseJson([
                 'message' => 'API rate limit exceeded. Please try again later.'
             ], Response::HTTP_TOO_MANY_REQUESTS);
+        }
+        if ($exception instanceof UnauthorizedException) {
+            return returnResponseJson([
+                'message' => 'User is not logged in.'
+            ], Response::HTTP_FORBIDDEN);
         }
 
         return parent::render($request, $exception);
