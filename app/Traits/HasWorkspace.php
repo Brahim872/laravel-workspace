@@ -3,8 +3,6 @@
 namespace App\Traits;
 
 use App\Models\Workspace;
-use Illuminate\Support\Collection;
-use Spatie\Permission\Contracts\Role;
 
 trait HasWorkspace
 {
@@ -13,7 +11,6 @@ trait HasWorkspace
     /**
      * Determine if the model has (one of) the given role(s).
      *
-     * @param string|int|array|Role|Collection $workspaces
      * @param string|null $guard
      * @return bool
      */
@@ -22,7 +19,7 @@ trait HasWorkspace
 
         $this->loadMissing('workspaces');
         if (is_string($workspaces) && false !== strpos($workspaces, '|')) {
-            $workspaces = $this->convertPipeToArray($workspaces);
+            $workspaces = $this->convertToArray($workspaces);
         }
 
         if (is_int($workspaces)) {
@@ -46,9 +43,7 @@ trait HasWorkspace
 
     /**
      * Determine if the model has any of the given role(s).
-     *
-     * Alias to hasRole() but without Guard controls
-     *
+     **
      * @param array $workspaces
      * @return bool
      */
@@ -57,7 +52,7 @@ trait HasWorkspace
         return $this->hasWorkspace($workspaces);
     }
 
-    protected function convertPipeToArray(string $pipeString)
+    protected function convertToArray(string $pipeString)
     {
         $pipeString = trim($pipeString);
 
@@ -78,9 +73,5 @@ trait HasWorkspace
 
         return explode('|', trim($pipeString, $quoteCharacter));
     }
-
-
-
-
 
 }

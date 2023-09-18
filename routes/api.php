@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware(['guest','throttle:6,1'])->group(function () {
+Route::middleware(['guest','throttle:100,1'])->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['verified'/*,'check.token'*/])
@@ -59,7 +59,7 @@ Route::middleware(['guest','throttle:6,1'])->group(function () {
 });
 
 //account
-Route::middleware(['auth:sanctum','throttle:6,1'])->group(function () {
+Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
