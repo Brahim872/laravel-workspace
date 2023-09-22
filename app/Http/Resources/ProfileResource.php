@@ -21,6 +21,7 @@ class ProfileResource extends JsonResource
             'email' => $this->email,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'role' => $this->roles->first()->name??null,
             'workspace' => $_workspace?new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user):null,
         ];
     }

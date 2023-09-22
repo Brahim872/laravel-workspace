@@ -46,7 +46,7 @@ class WorkspaceResource extends JsonResource
                 $result[] = [
                     'id' => $workspace->id,
                     'slug' => $workspace->slug,
-                    'name' => $workspace->name,
+                    'name' => $workspace->name??null,
                     'paid_at' => $workspace->paid_at,
                     'type_user' => User::TYPE_USER[$workspace->pivot->type_user],
                 ];
@@ -55,11 +55,12 @@ class WorkspaceResource extends JsonResource
 
             $result = [
                 'id' => $this->id,
-                'slug' => $this->slug,
+//                'slug' => $this->slug,
                 'name' => $this->name,
                 'paid_at' => $this->paid_at,
                 'type_user' => User::TYPE_USER[$this->typeUser],
-                'role' => new RoleResource($this->roles->first()),
+//                'role' => new RoleResource($this->roles->first()),
+                'role' => $this->roles->first()->name??null,
             ];
 
         }

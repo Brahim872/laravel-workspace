@@ -12,6 +12,12 @@ class UserResource extends JsonResource
 
     protected $invite, $token;
 
+    /**
+     *
+     * @param $resource
+     * @param null $token
+     */
+
     public function __construct($resource, /*$invite = false,*/ $token = null)
     {
         parent::__construct($resource);
@@ -22,15 +28,11 @@ class UserResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
+     * @param Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
-//        $token = null;
-
-//        if ($request->route()->uri() == "api/login" || $this->invite) {
-//            $token = $this->createToken('auth-token')->plainTextToken;
-//        }
         $_workspace = $this->workspaces()->where('workspaces.id', '=', $this->current_workspace)->first();
 
         return [
@@ -38,7 +40,7 @@ class UserResource extends JsonResource
 //            'name' => $this->name,
 //            'email' => $this->email,
 //            'created_at' => $this->created_at,
-//            'updated_at' => $this->updated_at,
+            'role' => $this->roles->first()->name??null,
             'token' => $this->token,
             'workspace' => $_workspace ? new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user): null,
         ];

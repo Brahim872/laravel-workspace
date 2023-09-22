@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->bigInteger('current_workspace')->nullable();
             $table->ipAddress()->nullable();
+            $table->string('expo_push_token')->nullable(); // Store Expo Push Tokens
             $table->string('device')->nullable();
 
             $table->rememberToken();

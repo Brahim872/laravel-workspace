@@ -6,6 +6,7 @@ use App\Models\Invite;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Notifications\InvitationEmail;
+use App\Traits\HasWorkspace;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -41,7 +42,7 @@ class InviteController extends Controller
 
             $workspaceRequest = Workspace::find($workspace);
 
-            if(!returnUserApi()->hasWorkspace($workspaceRequest->id)) {
+            if (!returnUserApi()->hasWorkspace($workspaceRequest->id)) {
                 return returnResponseJson([
                     'message' => 'This workspace does not exist '
                 ], Response::HTTP_BAD_REQUEST);
@@ -57,16 +58,24 @@ class InviteController extends Controller
             $request['workspace'] = $workspace;
             foreach ($request->email as $_email) {
 
-                $invitations[] = new Invite([
-                    'email' => $_email,
-                    'workspace' => $request['workspace'],
-                ]);
-            }
+                $user = User::where('email', '=', $_email)->first();
 
+                if ($user && $user->hasWorkspaces()->count()!=0) {
+
+                    return returnResponseJson(['message' => $user->email.': already has a workspace',
+                        'note' => 'We didn\'t send any invitation. Resolve problem first'], Response::HTTP_BAD_REQUEST);
+
+                } else {
+                    $invitations[] = new Invite([
+                        'email' => $_email,
+                        'workspace' => $request['workspace'],
+                    ]);
+                }
+            }
 
             if ($this->checkInvitation($invitations)[1]) {
                 return returnResponseJson(['message' => 'Already send link to :' . $this->checkInvitation($invitations)[0],
-                    'note'=>'dont sent any invitation. resolve Problem first'], Response::HTTP_BAD_REQUEST);
+                    'note' => 'We didn\'t send any invitation. Resolve problem first'], Response::HTTP_BAD_REQUEST);
             };
 
 
@@ -113,7 +122,6 @@ class InviteController extends Controller
             $invite->update(['accepted_at' => Carbon::now()]);
             $me->update(['current_workspace' => $workspace->id]);
 
-
             $me->workspaces()->detach();
 
             $me->workspaces()->attach($workspace->id, [
@@ -137,10 +145,13 @@ class InviteController extends Controller
         $error = false;
 
         foreach ($invitations as $invitation) {
+
+
             if ($invitation->hasAleardyInvitation()) {
                 $emails .= $invitation->email . ',';
                 $error = true;
             }
+
         }
         return [substr_replace($emails, "", -1), $error];
     }

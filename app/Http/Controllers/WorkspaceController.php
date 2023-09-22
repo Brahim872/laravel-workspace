@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\WorkspaceRequest;
 use App\Http\Resources\WorkspaceResource;
 use App\Models\User;
 use App\Models\Workspace;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkspaceController extends Controller
@@ -17,6 +19,16 @@ class WorkspaceController extends Controller
 //    use CrudTrait;
 
     protected $model = Workspace::class;
+
+
+    public function rules()
+    {
+        return [
+            'name' => 'required',
+            'pack' => 'string',
+
+        ];
+    }
 
 
     /**
@@ -34,7 +46,20 @@ class WorkspaceController extends Controller
 
     public function store(Request $request)
     {
-        $model = (new $this->model)->create($request->all());
+
+        $validator = Validator::make($request->all(), $this->rules());
+
+        if ($validator->fails()) {
+            return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
+        }
+
+       if ( returnUserApi()->hasWorkspaces()->count() >= config('pack.workspace_limit')){
+           return returnResponseJson(['message'=>'Cant create more than '.config('pack.workspace_limit').' workspace(s)'], Response::HTTP_FORBIDDEN);
+       }
+
+        $model = (new $this->model)->create([
+            'name'=>$request->name,
+        ]);
 
         $model->users()->detach();
 

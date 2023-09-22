@@ -12,6 +12,7 @@ class Workspace extends Model
 {
     use HasFactory, Sluggable, HasRoles;
 
+
     protected $guard_name = 'sanctum';
 
 

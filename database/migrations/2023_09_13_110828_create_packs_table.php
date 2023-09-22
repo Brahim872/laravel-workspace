@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('packs', function (Blueprint $table) {
             $table->integer('id', true, true)->nullable(false)->index();
             $table->string('name')->nullable();
-            $table->string('image')->nullable();
-            $table->bigInteger('coust')->nullable();
-            $table->bigInteger('descount')->nullable();
+            $table->string('avatar')->nullable();
+            $table->integer('coust')->nullable();
+            $table->integer('descount')->nullable();
             $table->text('discription')->nullable();
 
             $table->timestamps();

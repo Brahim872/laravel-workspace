@@ -53,6 +53,7 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->assignRole('user');
 
         if (!$this->validInvitation($request)) {
             event(new Registered($user));

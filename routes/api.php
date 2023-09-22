@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
@@ -30,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware(['guest','throttle:6,1'])->group(function () {
+Route::middleware(['guest','throttle:100,1'])->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['verified'/*,'check.token'*/])
@@ -60,7 +61,13 @@ Route::middleware(['guest','throttle:6,1'])->group(function () {
 });
 
 //account
-Route::middleware(['auth:sanctum','throttle:6,1'])->group(function () {
+Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
+
+
+    Route::get('/subscribe-to-notifications', [NotificationController::class, 'subscribe']);
+    Route::post('/send-test-notification', 'NotificationController@sendTestNotification');
+
+
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
