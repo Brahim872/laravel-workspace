@@ -32,6 +32,7 @@ class AuthenticatedSessionController extends Controller
 
     public function store(Request $request)
     {
+
         try {
             $validator = Validator::make($request->all(), $this->rules());
 
@@ -56,7 +57,9 @@ class AuthenticatedSessionController extends Controller
             return returnResponseJson(["error" => "That credentials not compatible with data."], Response::HTTP_BAD_REQUEST);
 
         } catch (\Exception $e) {
-            return $e->getMessage();
+            return returnResponseJson(["message" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+
+
         }
     }
 

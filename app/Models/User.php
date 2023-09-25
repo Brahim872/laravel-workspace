@@ -25,8 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'email',
         'password',
         'current_workspace',
@@ -104,10 +103,7 @@ class User extends Authenticatable implements MustVerifyEmail
         parent::boot();
 
         static::creating(function ($user) {
-            // Store the user's IP address
             $user->ip_address = request()->ip();
-
-            // Store the user's device information
             $user->device = request()->header('User-Agent');
         });
     }

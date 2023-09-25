@@ -19,9 +19,8 @@ Route::get('/', function () {
 });
 
 
-Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle']);
+Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
-
 
 
 //require __DIR__.'/auth.php';

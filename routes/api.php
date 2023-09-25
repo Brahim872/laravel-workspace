@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AppsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackController;
@@ -31,7 +33,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware(['guest','throttle:100,1'])->group(function () {
+Route::middleware(['guest','throttle:6,1'])->group(function () {
+
+    Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
+    Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
+
+
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['verified'/*,'check.token'*/])
@@ -108,6 +115,13 @@ Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{id}')->gr
     Route::post('pack-workspace', [PackController::class,'store'])
         ->middleware('role:pack|free')
         ->name('pack.workspace');
+
+
+
+
+    Route::post('charts-apps', [AppsController::class,'index'])
+        ->middleware('role:pack|free')
+        ->name('charts.apps');
 
 
 });

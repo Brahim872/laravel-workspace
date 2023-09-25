@@ -18,6 +18,7 @@ class GoogleAuthController extends Controller
 
     public function redirectToGoogle()
     {
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -51,8 +52,7 @@ class GoogleAuthController extends Controller
                     return returnResponseJson(['user' => $userResource], Response::HTTP_OK);
                 } else {
                     $user = User::create([
-                        'first_name' => $user->name,
-                        'last_name' => $user->name,
+                        'name' => $user->name,
                         'email' => $user->email,
                         'social_id' => $user->id,
                         'social_type' => "google",
@@ -65,7 +65,6 @@ class GoogleAuthController extends Controller
                     return returnResponseJson([
                         'user' => new UserResource($user, $token),
                     ], Response::HTTP_OK);
-
 
                 }
 
