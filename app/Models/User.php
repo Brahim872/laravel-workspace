@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Traits\Models\HasImages;
-use App\Traits\Models\HasWorkspace;
+use App\Traits\HasImages;
+use App\Traits\HasWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;

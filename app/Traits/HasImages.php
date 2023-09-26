@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits\Models;
+namespace App\Traits;
 
 use App\Models\Image;
 use Illuminate\Http\Response;
@@ -80,10 +80,9 @@ trait HasImages
         $model = $this->getModel();
         $model->update(['avatar' => $path]);
 
-
-        if (\Storage::exists('public/' . $old_image)) {
-            \Storage::delete('public/' . $old_image);
-        }
+//        if (\Storage::exists('public/' . $old_image)) {
+//            \Storage::delete('public/' . $old_image);
+//        }
 
         return returnResponseJson([
             'message' => 'upload success',

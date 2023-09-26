@@ -82,8 +82,7 @@ class UserController extends Controller
             return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
         }
 
-
-        return returnUserApi()->changeAvatar($request->file('avatar'),'images/users');
+        return returnUserApi()->changeAvatar($request->file('avatar'),'images/'.returnUserApi()->id.'/avatar');
 
 //        return returnUserApi()->updateImage($request->file('avatar'),'');
 
