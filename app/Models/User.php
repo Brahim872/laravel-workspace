@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Traits\HasWorkspace;
+use App\Traits\Models\HasImages;
+use App\Traits\Models\HasWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +14,12 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements MustVerifyEmail
 {
 
-    use HasApiTokens, HasFactory, Notifiable, HasWorkspace, HasRoles;
+    use HasApiTokens,
+        HasFactory,
+        Notifiable,
+        HasWorkspace,
+        HasRoles,
+        HasImages;
 
     protected $guard_name = 'sanctum';
 
@@ -31,6 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'current_workspace',
         'ip_address',
         'device',
+        'avatar',
         'is_email_verified',
         'social_id',
         'social_type',
@@ -107,5 +113,6 @@ class User extends Authenticatable implements MustVerifyEmail
             $user->device = request()->header('User-Agent');
         });
     }
+
 
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackController;
@@ -96,6 +97,12 @@ Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
 
     Route::get('profile', [UserController::class,'index'])
         ->name('getProfile');
+
+    Route::post('edit-profile', [UserController::class,'update'])
+        ->name('editProfile');
+
+    Route::post('change-avatar', [UserController::class,'changeAvatar'])
+        ->name('changeAvatar');
 
 });
 

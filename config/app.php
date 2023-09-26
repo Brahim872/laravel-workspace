@@ -174,6 +174,7 @@ return [
 
         Spatie\Permission\PermissionServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
+//        Spatie\ImageOptimizer\ImageOptimizerServiceProvider::class,
 
 
     ])->toArray(),
