@@ -176,6 +176,7 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
 //        Spatie\ImageOptimizer\ImageOptimizerServiceProvider::class,
 
+
         Intervention\Image\ImageServiceProvider::class,
 
 
@@ -195,7 +196,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'Socialite'=>Laravel\Socialite\SocialiteServiceProvider::class,
-        'InterventioImage' => Intervention\Image\Facades\Image::class,
+        'Image' => Intervention\Image\Facades\Image::class,
     ])->toArray(),
 
 ];

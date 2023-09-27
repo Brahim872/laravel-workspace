@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-
+use Intervention\Image\Image as InterventionImage;
 class UserController extends Controller
 {
 
@@ -71,6 +71,8 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+
 
 
     public function changeAvatar(Request $request)
