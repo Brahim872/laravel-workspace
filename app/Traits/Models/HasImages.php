@@ -74,16 +74,20 @@ trait HasImages
     public function changeAvatar($file, $path = 'images')
     {
 
-        $old_image = returnUserApi()->avatar;
-        $extension = $file->getClientOriginalExtension();
-        $path = Storage::disk('public')->putFileAs($path, $file, uniqid() . '.' . $extension);
-        $model = $this->getModel();
-        $model->update(['avatar' => $path]);
+        $image = $file;
+        $input['avatar'] = uniqid() . '.' . $image->getClientOriginalExtension();
+
+        $destinationPath = storage_path('public/'.$path);
 
 
-        if (\Storage::exists('public/' . $old_image)) {
-            \Storage::delete('public/' . $old_image);
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true); // The third parameter ensures nested directories are created
         }
+
+        $imgFile = (new \Intervention\Image\ImageManager)->make($image->getRealPath());
+
+        $imgFile->resize(150,150)
+            ->save($destinationPath . '/' . $input['avatar'],60);
 
         return returnResponseJson([
             'message' => 'upload success',
