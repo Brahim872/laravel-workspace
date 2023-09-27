@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 
 use Illuminate\Support\Facades\Storage;
 use function Termwind\ValueObjects\lowercase;
+use Intervention\Image\ImageManagerStatic as InterventionImage;
 
 
 trait HasImages
@@ -76,9 +77,12 @@ trait HasImages
 
         $old_image = returnUserApi()->avatar;
         $extension = $file->getClientOriginalExtension();
-        $path = Storage::disk('public')->putFileAs($path, $file, uniqid() . '.' . $extension);
-        $model = $this->getModel();
-        $model->update(['avatar' => $path]);
+
+
+        InterventionImage::make($file)->save($path.uniqid() . '.' . $extension,10);
+//        $path = Storage::disk('public')->putFileAs($path, $file, );
+//        $model = $this->getModel();
+//        $model->update(['avatar' => $path]);
 
 //        if (\Storage::exists('public/' . $old_image)) {
 //            \Storage::delete('public/' . $old_image);
