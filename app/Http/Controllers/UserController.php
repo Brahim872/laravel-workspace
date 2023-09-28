@@ -50,6 +50,8 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
+
+
         try {
             $validator = Validator::make($request->all(), $this->rulesUpdate());
 
@@ -58,6 +60,7 @@ class UserController extends Controller
             }
 
             $user = returnUserApi()->update($request->all());
+
 
             if ($user) {
                 return returnResponseJson([
@@ -70,6 +73,8 @@ class UserController extends Controller
                 'getCode' => $e->getCode(),
             ], 500);
         }
+
+
     }
 
 

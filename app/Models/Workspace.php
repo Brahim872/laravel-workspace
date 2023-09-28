@@ -6,10 +6,13 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Activitylog\LogOptions;
+use App\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class Workspace extends Model
 {
+    use LogsActivity;
     use HasFactory, Sluggable, HasRoles;
 
 
@@ -48,5 +51,12 @@ class Workspace extends Model
         }
         return $this->belongsToMany(User::class, 'workspace_user')
             ->withPivot(['type_user']);
+    }
+
+
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
     }
 }

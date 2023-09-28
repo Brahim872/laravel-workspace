@@ -53,12 +53,12 @@ class WorkspaceController extends Controller
             return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
         }
 
-       if ( returnUserApi()->hasWorkspaces()->count() >= config('pack.workspace_limit')){
-           return returnResponseJson(['message'=>'Cant create more than '.config('pack.workspace_limit').' workspace(s)'], Response::HTTP_FORBIDDEN);
-       }
+        if (returnUserApi()->hasWorkspaces()->count() >= config('pack.workspace_limit')) {
+            return returnResponseJson(['message' => 'Cant create more than ' . config('pack.workspace_limit') . ' workspace(s)'], Response::HTTP_FORBIDDEN);
+        }
 
         $model = (new $this->model)->create([
-            'name'=>$request->name,
+            'name' => $request->name,
         ]);
 
         $model->users()->detach();
@@ -71,6 +71,7 @@ class WorkspaceController extends Controller
 
         auth('sanctum')->user()->update(['current_workspace' => $model->id]);
 
+        activity()->causedBy(returnUserApi()->id);
         return returnResponseJson([
             'workspace' => new WorkspaceResource($model)
         ], 200);

@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use App\Traits\LogsActivity;
 
 class Pack extends Model
 {
-    use HasFactory;
+    use HasFactory,
+        LogsActivity;
 
     protected $fillable = [
         "id",
@@ -19,5 +22,8 @@ class Pack extends Model
 
     public $incrementing = false;
 
-
+    public function getActivitylogOptions(): LogOptions
+    {
+        return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
+    }
 }

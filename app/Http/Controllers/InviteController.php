@@ -32,7 +32,6 @@ class InviteController extends Controller
 
     public function store(Request $request, $workspace)
     {
-
         try {
             $validator = Validator::make($request->all(), $this->rules());
 

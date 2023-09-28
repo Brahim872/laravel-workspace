@@ -36,11 +36,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware(['guest','throttle:6,1'])->group(function () {
 
-    Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
-    Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
-
-
-
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['verified'/*,'check.token'*/])
         ->name('login');
@@ -81,11 +76,11 @@ Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
         ->name('logout');
 
     Route::post('/workspace', [WorkspaceController::class, 'store'])
-        ->name('workspace');
+        ->name('workspace.store');
 
     Route::get('/workspaces', [WorkspaceController::class, 'index'])
         ->middleware('hasWorkspace')
-        ->name('workspace');
+        ->name('workspace.index');
 
     Route::post('switch-workspace', [WorkspaceController::class,'change'])
         ->middleware('hasWorkspace')
@@ -110,24 +105,24 @@ Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
 Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{id}')->group(function () {
 
     Route::post('send-invitation', [InviteController::class,'store'])
-        ->middleware('role:pack|free')
+        ->middleware('role:pack_two|free')
         ->name('storeInvitation');
 
 
     Route::post('modify-workspace', [WorkspaceController::class,'update'])
-        ->middleware('role:pack|free')
+        ->middleware('role:pack_two|free')
         ->name('workspace.update');
 
 
     Route::post('pack-workspace', [PackController::class,'store'])
-        ->middleware('role:pack|free')
+        ->middleware('role:pack_two|free')
         ->name('pack.workspace');
 
 
 
 
     Route::post('charts-apps', [AppsController::class,'index'])
-        ->middleware('role:pack|free')
+        ->middleware('role:pack_two|free')
         ->name('charts.apps');
 
 

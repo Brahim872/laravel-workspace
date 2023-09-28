@@ -28,6 +28,7 @@ trait CrudTrait
         $view = $this->getView('backend.' . $this->prefixName . '.form')
 
             ->with('action',route($this->prefixName.'.store'));
+
         return $view;
     }
 
@@ -52,7 +53,6 @@ trait CrudTrait
         if ($saveModel) {
             $this->afterSave($request->all(), $saveModel);
         }
-
         return $this->responseStore($saveModel);
     }
 
@@ -119,8 +119,6 @@ trait CrudTrait
     {
         $result = $this->model::findOrFail($id);
         $result->delete();
-
-        toastr()->success($this->prefixName . 'deleted_successfully.');
         return redirect()->route($this->prefixName . '.index');
     }
 
@@ -129,7 +127,6 @@ trait CrudTrait
 
         $model = $this->model::where('slug', $user)->first();
         $view = $this->getView('backend.' . $this->prefixName . '.show');
-
         return $view->with('model', $model);
 
     }
