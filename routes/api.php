@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\App\AppBuildingController;
 use App\Http\Controllers\AppsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -7,15 +8,12 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\GoogleAuthController;
-use App\Http\Controllers\ImageController;
 use App\Http\Controllers\InviteController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PackController;
+use App\Http\Controllers\Payments\PaymentStripeController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,12 +32,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::middleware(['guest','throttle:6,1'])->group(function () {
+Route::middleware(['guest', 'throttle:6,1'])->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
         ->middleware(['verified'/*,'check.token'*/])
         ->name('login');
-
 
 
     Route::post('/register', [RegisteredUserController::class, 'store'])
@@ -63,13 +60,12 @@ Route::middleware(['guest','throttle:6,1'])->group(function () {
 
 });
 
-//account
-Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
 
+Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
-    Route::get('/subscribe-to-notifications', [NotificationController::class, 'subscribe']);
-    Route::post('/send-test-notification', 'NotificationController@sendTestNotification');
+    Route::get('/plans', [PlanController::class, 'index']);
 
+    Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout']);
 
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -78,52 +74,68 @@ Route::middleware(['auth:sanctum','throttle:100,1'])->group(function () {
     Route::post('/workspace', [WorkspaceController::class, 'store'])
         ->name('workspace.store');
 
+    Route::post('/plan', [PlanController::class, 'store']);
+
+
     Route::get('/workspaces', [WorkspaceController::class, 'index'])
         ->middleware('hasWorkspace')
         ->name('workspace.index');
 
-    Route::post('switch-workspace', [WorkspaceController::class,'change'])
+    Route::post('switch-workspace', [WorkspaceController::class, 'change'])
         ->middleware('hasWorkspace')
         ->name('workspace.change');
 
 
-    Route::post('accept-invitation', [InviteController::class,'accept'])
+    Route::post('accept-invitation', [InviteController::class, 'accept'])
         ->name('acceptInvitation');
 
-    Route::get('profile', [UserController::class,'index'])
+    Route::get('profile', [UserController::class, 'index'])
         ->name('getProfile');
 
-    Route::post('edit-profile', [UserController::class,'update'])
+    Route::post('edit-profile', [UserController::class, 'update'])
         ->name('editProfile');
 
-    Route::post('change-avatar', [UserController::class,'changeAvatar'])
+    Route::post('change-avatar', [UserController::class, 'changeAvatar'])
         ->name('changeAvatar');
 
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //workspace
-Route::middleware(['auth:sanctum','hasWorkspace'])->prefix('workspace/{id}')->group(function () {
+    Route::middleware(['hasWorkspace'])->prefix('/workspace/{id}')->group(function () {
 
-    Route::post('send-invitation', [InviteController::class,'store'])
-        ->middleware('role:pack_two|free')
-        ->name('storeInvitation');
-
-
-    Route::post('modify-workspace', [WorkspaceController::class,'update'])
-        ->middleware('role:pack_two|free')
-        ->name('workspace.update');
+        Route::post('send-invitation', [InviteController::class, 'store'])
+            ->name('storeInvitation');
 
 
-    Route::post('pack-workspace', [PackController::class,'store'])
-        ->middleware('role:pack_two|free')
-        ->name('pack.workspace');
+        Route::post('modify-workspace', [WorkspaceController::class, 'update'])
+            ->name('workspace.update');
 
 
+        Route::post('plan-workspace', [PlanController::class, 'store'])
+            ->name('plan.workspace');
 
 
-    Route::post('charts-apps', [AppsController::class,'index'])
-        ->middleware('role:pack_two|free')
-        ->name('charts.apps');
+        Route::post('charts-apps', [AppsController::class, 'index'])
+            ->name('charts.apps');
 
 
+        Route::post('/create-app', [AppBuildingController::class, 'store'])
+            ->middleware(['EnsureHaveAppsToBuilding'])
+            ->name('create.app.store');
+
+    });
 });

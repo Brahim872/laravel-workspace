@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Payments\PaymentStripeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,13 @@ Route::get('/', function () {
 
 Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
 Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
+
+Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
+    ->name('checkout.success');
+
+Route::get('/checkout/cancel', [PaymentStripeController::class, 'cancel'])
+    ->name('checkout.cancel');
+
 
 
 //require __DIR__.'/auth.php';
