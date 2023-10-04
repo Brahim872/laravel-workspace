@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\WorkspaceRequest;
 use App\Http\Resources\WorkspaceResource;
+use App\Models\Plan;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Traits\CrudTrait;
@@ -53,34 +54,34 @@ class WorkspaceController extends Controller
             return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
         }
 
-        if (returnUserApi()->hasWorkspaces()->count() >= config('pack.workspace_limit')) {
-            return returnResponseJson(['message' => 'Cant create more than ' . config('pack.workspace_limit') . ' workspace(s)'], Response::HTTP_FORBIDDEN);
+        if (returnUserApi()->hasWorkspaces()->count() >= config('app-sittings.workspace_limit')) {
+            return returnResponseJson(['message' => 'you can\'t create more than ' . config('app-sittings.workspace_limit') . ' workspace(s)'], Response::HTTP_FORBIDDEN);
         }
 
         $model = (new $this->model)->create([
             'name' => $request->name,
         ]);
 
-        $model->users()->detach();
+//        $plan = Plan::find(1);
+//        $model->plans()->associate($plan)->save();
 
+
+        $model->users()->detach();
         $model->users()->attach(returnUserApi()->id, [
             'type_user' => 0 // = admin
         ]);
 
-        $model->assignRole($request->pack);
-
         auth('sanctum')->user()->update(['current_workspace' => $model->id]);
 
-        activity()->causedBy(returnUserApi()->id);
-        return returnResponseJson([
-            'workspace' => new WorkspaceResource($model)
-        ], 200);
+        return returnResponseJson(['workspace' => new WorkspaceResource($model)], 200);
     }
 
 
     public function change(Request $request)
     {
         try {
+
+
 
             if (!returnUserApi()->workspaces()->where('workspace_user.workspace_id', '=', $request->workspace_id)->first()) {
                 return returnResponseJson([
@@ -99,9 +100,7 @@ class WorkspaceController extends Controller
 
             return returnResponseJson([
                 'message' => 'you are switch to workspace: ' . $workspace->name,
-                'user' => [
-                    'workspace' => new WorkspaceResource($workspace)
-                ]
+                'workspace' => new WorkspaceResource($workspace)
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
@@ -119,10 +118,7 @@ class WorkspaceController extends Controller
             if ($_workspace) {
 
                 return returnResponseJson([
-                    'message' => 'update workspace has been successful',
-                    'user' => [
-                        'workspace' => new WorkspaceResource(Workspace::find($workspace))
-                    ]
+                    'workspace' => new WorkspaceResource(Workspace::find($workspace))
                 ], Response::HTTP_OK);
             }
         } catch (\Exception $e) {

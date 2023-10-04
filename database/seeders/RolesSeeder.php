@@ -13,7 +13,7 @@ class RolesSeeder extends Seeder
 
     public function __construct()
     {
-        $this->roles = config('pack.items');
+        $this->roles = config('app-sittings.roles');
     }
 
 

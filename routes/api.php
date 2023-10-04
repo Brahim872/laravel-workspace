@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
 use App\Http\Controllers\Payments\PaymentStripeController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
@@ -63,10 +64,11 @@ Route::middleware(['guest', 'throttle:6,1'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
-    Route::get('/plans', [PlanController::class, 'index']);
+    Route::post('/plans', [PlanController::class, 'index']);
 
     Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout']);
 
+    Route::post('workspace/{id}/checkout-add-apps/{plan}', [PaymentAddAppsBuildingStripeController::class, 'checkout']);
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
@@ -76,20 +78,17 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
     Route::post('/plan', [PlanController::class, 'store']);
 
-
-    Route::get('/workspaces', [WorkspaceController::class, 'index'])
-        ->middleware('hasWorkspace')
+    Route::post('/workspaces', [WorkspaceController::class, 'index'])
         ->name('workspace.index');
 
     Route::post('switch-workspace', [WorkspaceController::class, 'change'])
-        ->middleware('hasWorkspace')
+        ->middleware(['hasWorkspace:current'])
         ->name('workspace.change');
-
 
     Route::post('accept-invitation', [InviteController::class, 'accept'])
         ->name('acceptInvitation');
 
-    Route::get('profile', [UserController::class, 'index'])
+    Route::post('profile', [UserController::class, 'index'])
         ->name('getProfile');
 
     Route::post('edit-profile', [UserController::class, 'update'])
@@ -97,21 +96,6 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
     Route::post('change-avatar', [UserController::class, 'changeAvatar'])
         ->name('changeAvatar');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //workspace
@@ -134,7 +118,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
 
         Route::post('/create-app', [AppBuildingController::class, 'store'])
-            ->middleware(['EnsureHaveAppsToBuilding'])
+            ->middleware(['EnsureHaveAppsToBuilding', 'checkPlan:plan_one'])
             ->name('create.app.store');
 
     });

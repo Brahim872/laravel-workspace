@@ -13,55 +13,18 @@ return [
     |
      */
 
-    'items' => [
+    'roles' => [
         [
             "id" => 1,
-            "name" => "free",
-            "coust" => 0,
-            "discription" =>"discription",
-            "descount" =>0,
+            "name" => "admin",
         ],
         [
             "id" => 2,
-            "name" => "pack",
-            "coust" =>100,
-            "discription" =>"discription",
-            "descount" =>0,
+            "name" => "user",
         ],
         [
             "id" => 3,
-            "name" => "pack_two",
-            "coust" =>100,
-            "discription" =>"discription",
-            "descount" =>0,
-        ],
-        [
-            "id" => 4,
-            "name" => "pack_three",
-            "coust" =>100,
-            "discription" =>"discription",
-            "descount" =>0,
-        ],
-        [
-            "id" => 10,
-            "name" => "admin",
-            "coust" =>100,
-            "discription" =>"discription",
-            "descount" =>0,
-        ],
-        [
-            "id" => 11,
-            "name" => "user",
-            "coust" =>100,
-            "discription" =>"discription",
-            "descount" =>0,
-        ],
-        [
-            "id" => 12,
             "name" => "developer",
-            "coust" =>100,
-            "discription" =>"discription",
-            "descount" =>0,
         ],
     ],
 
@@ -124,6 +87,6 @@ return [
     |
      */
 
-    'workspace_limit'=>env('WORKSPACE_LIMIT', 1)
+    'workspace_limit'=>env('WORKSPACE_LIMIT', 100)
 
 ];

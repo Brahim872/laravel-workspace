@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Http\Middleware\EnsureNotConnected;
-use App\Http\Resources\InvitationResource;
 use App\Http\Resources\UserResource;
-use App\Models\Invite;
 use App\Models\User;
 use Google\Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;

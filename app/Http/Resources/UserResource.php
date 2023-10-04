@@ -36,12 +36,10 @@ class UserResource extends JsonResource
         $_workspace = $this->workspaces()->where('workspaces.id', '=', $this->current_workspace)->first();
 
         return [
-//            'id' => $this->id,
-//            'name' => $this->name,
-//            'email' => $this->email,
-//            'created_at' => $this->created_at,
-            'role' => $this->roles->first()->name??null,
-            'token' => $this->token,
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' =>  $this->roles->first()->name,
             'workspace' => $_workspace ? new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user): null,
         ];
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
 use App\Http\Controllers\Payments\PaymentStripeController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,13 @@ Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
 
 Route::get('/checkout/cancel', [PaymentStripeController::class, 'cancel'])
     ->name('checkout.cancel');
+
+
+Route::get('/checkout-add-app/success', [PaymentAddAppsBuildingStripeController::class, 'success'])
+    ->name('checkout.add.app.success');
+
+Route::get('/checkout-add-app/cancel', [PaymentAddAppsBuildingStripeController::class, 'cancel'])
+    ->name('checkout.add.app.cancel');
 
 
 

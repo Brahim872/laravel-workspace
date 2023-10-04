@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Pack;
+use App\Models\Plan;
+use App\Models\PlanPlusApp;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -14,10 +15,8 @@ class PacksSeeder extends Seeder
 
     public function __construct()
     {
-        $this->roles = config('pack.items');
+//        $this->roles = config('pack.items');
     }
-
-
 
 
     /**
@@ -28,30 +27,75 @@ class PacksSeeder extends Seeder
 
     public function run()
     {
-//        Role::query()->delete();
 
-        $myRoles = [];
-        foreach ($this->roles as $index => $role) {
-            $myRoles[] = $role['name'];
-        }
 
-        Pack::whereNotIn('name',$myRoles)->delete();
 
-        foreach ($this->roles as $index => $role) {
-            Pack::updateOrCreate(
+        PlanPlusApp::whereNotIn('name', ['add five app'])->delete();
+
+        PlanPlusApp::updateOrCreate(
+            [
+                'id' => 1,
+            ],
+            [
+                "st_plan_id" => "price_1NwxViF4001KsKGE9AH3lVLh",
+                "name" => "add five app",
+                "price" => "5",
+                "number_app_building" => "5",
+                "updated_at" => "2023-10-01T23:07:02.000000Z",
+                "created_at" => "2023-10-01T23:07:02.000000Z",
+                "id" => 1
+            ]
+        );
+
+
+
+
+
+
+
+
+
+
+
+        Plan::whereNotIn('name', ['plan_one','free'])->delete();
+
+//        foreach ($this->roles as $index => $role) {
+            Plan::updateOrCreate(
                 [
-                    'id' => $role['id'],
-                    'name' => $role['name']
+                    'id' => 1,
                 ],
                 [
-                    'id' => $role['id'],
-                    'name' => $role['name'],
-                    'coust' => $role['coust'],
-                    'descount' => $role['descount'],
-                    'discription' => $role['discription'],
+                    "st_plan_id" => "price_1NwwXsF4001KsKGEs8wYkmif",
+                    "name" => "free",
+                    "price" => "0",
+                    "number_app_building" => "0",
+                    "interval" => "month",
+                    "trial_period_days" => "0",
+                    "lookup_key" => "free",
+                    "updated_at" => "2023-10-01T23:07:02.000000Z",
+                    "created_at" => "2023-10-01T23:07:02.000000Z",
+                    "id" => 1
                 ]
             );
-        }
+
+            Plan::updateOrCreate(
+                [
+                    'id' => 2,
+                ],
+                [
+                    "st_plan_id" => "price_1NwwYwF4001KsKGEwspP7TAz",
+                    "name" => "plan_one",
+                    "price" => "12",
+                    "interval" => "month",
+                    "trial_period_days" => "0",
+                    "number_app_building" => "5",
+                    "lookup_key" => "plan_one",
+                    "updated_at" => "2023-10-01T23:07:02.000000Z",
+                    "created_at" => "2023-10-01T23:07:02.000000Z",
+                    "id" => 2
+                ]
+            );
+//        }
     }
 
 }

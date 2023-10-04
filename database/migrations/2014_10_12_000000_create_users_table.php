@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('social_id')->nullable();
             $table->string('social_type')->nullable();
 
-
+            $table->softDeletes();
             $table->rememberToken();
             $table->timestamps();
         });

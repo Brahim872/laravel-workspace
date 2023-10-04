@@ -15,10 +15,16 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->nullable();
             $table->string('name');
-            $table->string('image')->nullable();
-            $table->dateTime('paid_at')->nullable();
+            $table->bigInteger('plan_id')->unsigned()->nullable();
+            $table->foreignId('payment_id')->nullable();
+            $table->string('avatar')->nullable();
             $table->dateTime('deactivated_at')->nullable();
+            $table->integer('count_app_building')->unsigned()->default(0);
+
             $table->timestamps();
+            $table->softDeletes();
+            $table->foreign('plan_id')->references('id')->on('plans')
+                ->onDelete('cascade');
         });
     }
 

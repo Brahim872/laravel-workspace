@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProfileResource;
+use App\Http\Resources\UserResource;
 use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\File;
@@ -36,7 +37,7 @@ class UserController extends Controller
     {
         try {
 
-            return new ProfileResource(auth('sanctum')->user());
+            return returnResponseJson(['user'=>new ProfileResource(auth('sanctum')->user())], Response::HTTP_OK);;
 
         } catch (\Exception $e) {
             return returnResponseJson([
@@ -65,6 +66,7 @@ class UserController extends Controller
             if ($user) {
                 return returnResponseJson([
                     'message' => "update success",
+                    'user' => new UserResource( returnUserApi()),
                 ], Response::HTTP_OK);
             }
         } catch (\Exception $e) {

@@ -4,14 +4,22 @@
 use Illuminate\Http\Response;
 
 if (!function_exists('returnResponseJson')) {
-    function returnResponseJson($data,$requestHttp)
+    function returnResponseJson($data, $requestHttp, $key = "data")
     {
-        return response()->json([
+        $key = ($key == '' || $key == null) ?'data': $key;
+
+        $response = [
             "status" => $requestHttp,
             "message_code" => Response::$statusTexts[$requestHttp],
-            "data" => $data,
+        ];
 
-        ], $requestHttp);
+        if (is_array( $data )){
+            foreach ($data as $key=>$value){
+                $response[$key] = $value;
+            }
+        }
+
+        return response()->json($response, $requestHttp);
     }
 
 }

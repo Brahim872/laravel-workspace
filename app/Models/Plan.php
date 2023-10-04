@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use App\Traits\LogsActivity;
 
-class Pack extends Model
+class Plan extends Model
 {
     use HasFactory,
         LogsActivity;
@@ -15,9 +15,13 @@ class Pack extends Model
     protected $fillable = [
         "id",
         "name",
-        "coust",
-        "descount",
-        "discription"
+        "avatar",
+        "price",
+        "interval",
+        "trial_period_days",
+        "lookup_key",
+        "st_plan_id",
+        "number_app_building",
     ];
 
     public $incrementing = false;
@@ -25,5 +29,10 @@ class Pack extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
+    }
+
+    public function workspaces()
+    {
+        return $this->hasMany(Workspace::class,'plan_id');
     }
 }

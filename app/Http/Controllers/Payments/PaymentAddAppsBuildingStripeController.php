@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Plan;
+use App\Models\PlanPlusApp;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
-use Stripe\Stripe;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PaymentStripeController extends Controller
+class PaymentAddAppsBuildingStripeController extends Controller
 {
 
     public function checkout(Request $request, $id, $plan_id)
@@ -19,37 +19,37 @@ class PaymentStripeController extends Controller
 
         try {
 
-            $plan = Plan::find($plan_id);
+            $plan = PlanPlusApp::find($plan_id);
             \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
 
             $lineItems = [[
-                'price' => $plan->st_plan_id,
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $plan->name,
+                    ],
+                    'unit_amount' => $plan->price * 100,
+                ],
                 'quantity' => 1,
             ]];
 
             $session = \Stripe\Checkout\Session::create([
-                'payment_method_types' => ['card'],
-                // 'phone_number_collection' => [
-                //     'enabled' => true,
-                // ],
-                'customer_email' => returnUserApi()->email,
                 'line_items' => $lineItems,
-                'mode' => 'subscription',
-                'subscription_data' => [
-                    'trial_from_plan' => true,
-                ],
-                'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}",
-                'cancel_url' => route('checkout.cancel', [], true),
+                'mode' => 'payment',
+                'success_url' => route('checkout.add.app.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}&plan=" . $plan_id,
+                'cancel_url' => route('checkout.add.app.cancel', [], true),
             ]);
 
 
-            $workspace = Workspace::find($id);
-            $workspace->update(['plan_id' => $plan_id]);
+//            $plan->users()->detach();
+//            $plan->users()->attach(returnUserApi()->id, [
+//                'type_user' => 0 // = admin
+//            ]);
 
             $order = new Order();
             $order->status = 'unpaid';
             $order->total_price = $plan->price;
-            $order->order_type = Order::TYPEPLAN['plan'];
+            $order->order_type = Order::TYPEPLAN['add_apps'];
             $order->session_id = $session->id;
             $order->workspace_id = $id;
             $order->user_id = returnUserApi()->id;
@@ -59,7 +59,7 @@ class PaymentStripeController extends Controller
                 'url' => $session->url
             ]);
         } catch (\Throwable $e) {
-           return returnResponseJson([
+            return returnResponseJson([
                 "message" => $e->getMessage(),
                 "Line" => $e->getLine()
             ], 500);
@@ -71,12 +71,19 @@ class PaymentStripeController extends Controller
     {
 
 
+
         $stripe = new \Stripe\StripeClient(config('app.stripe_secret'));
         $sessionId = $request->get('session_id');
+        $planId = $request->get('plan');
         try {
 
             $session = $stripe->checkout->sessions->retrieve($sessionId);
+
+
+
+
             $order = Order::where('session_id', $session->id)->first();
+            $planPlusApp = PlanPlusApp::find($planId);
 
             if (!$session) {
                 throw new NotFoundHttpException();
@@ -94,6 +101,14 @@ class PaymentStripeController extends Controller
             $payment->save();
 
             $workspace = Workspace::where('id', '=', $order->workspace_id)->first();
+
+
+            $countApp = $planPlusApp->number_app_building + $workspace->count_app_building;
+
+
+            $workspace->count_app_building = $countApp;
+            $workspace->save();
+
             if (!$workspace->payment_id) {
                 $workspace->payment_id = $payment->id;
                 $workspace->save();
@@ -113,7 +128,7 @@ class PaymentStripeController extends Controller
                 $order->payment_id = $payment->id;
                 $order->save();
             }
-            return redirect()->away('http://127.0.0.1:3000/plans/payment/success');
+//            return redirect()->away('http://127.0.0.1:3000/plans/payment/success');
         } catch (\Exception $e) {
             throw new NotFoundHttpException();
         }

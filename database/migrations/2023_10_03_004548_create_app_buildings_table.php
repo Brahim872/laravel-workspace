@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invites', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('email');
-            $table->string('token', 32)->unique();
-            $table->timestamp('accepted_at')->nullable();
-            $table->timestamp('refused_at')->nullable();
-            $table->bigInteger('workspace')->nullable();
+
+        Schema::create('app_buildings', function (Blueprint $table) {
+
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('slug')->nullable();
+            $table->foreignId('workspace_id')->nullable();
+            $table->bigInteger('user_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
         });
+
     }
 
     /**
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invites');
+        Schema::dropIfExists('app_buildings');
     }
 };

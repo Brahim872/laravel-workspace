@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 class Workspace extends Model
 {
     use LogsActivity;
-    use HasFactory, Sluggable, HasRoles;
+    use HasFactory, Sluggable;
 
 
     protected $guard_name = 'sanctum';
@@ -35,7 +35,7 @@ class Workspace extends Model
 
 
     protected $fillable = [
-        'name', 'paid_at', 'deactivated_at'
+        'name', 'avatar', 'slug', 'deactivated_at', 'payment_id', 'plan_id', 'count_app_building'
     ];
 
     /**
@@ -54,9 +54,32 @@ class Workspace extends Model
     }
 
 
+    /**
+     * The users that belong to the role.
+     * @param null $typ
+     * @return BelongsToMany
+     */
+    public function planPlusApps()
+    {
+        return $this->belongsToMany(PlanPlusApp::class, 'workspace_plan_plus_apps');
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {
         return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
     }
+
+
+    public function plans()
+    {
+        return $this->belongsTo(Plan::class, 'plan_id');
+    }
+
+
+    public function appBuildings()
+    {
+        return $this->belongsTo(AppBuilding::class, 'workspace_id');
+    }
+
 }

@@ -33,7 +33,7 @@ class PasswordResetLinkController extends Controller
         $validator = Validator::make($request->all(), $this->rules());
 
         if ($validator->fails()) {
-            return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
+            return returnResponseJson(['errors'=>$validator->messages()], Response::HTTP_BAD_REQUEST);
         }
 
         // We will send the password reset link to this user. Once we have attempted
@@ -45,9 +45,9 @@ class PasswordResetLinkController extends Controller
 
 
         if ($status != Password::RESET_LINK_SENT) {
-            return returnResponseJson(['email' => __($status)],400);
+            return returnResponseJson(['message' => __($status)],400);
         }
 
-        return returnResponseJson(['status' => __($status)],200);
+        return returnResponseJson(['message' => __($status)],200);
     }
 }

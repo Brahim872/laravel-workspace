@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('plan_plus_apps', function (Blueprint $table) {
             $table->id();
-            $table->integer('imageable_id');
-            $table->string("imageable_type");
-            $table->string("url")->nullable();
-            $table->softDeletes();
+            $table->string('name')->unique();
+            $table->string('avatar')->nullable();
+            $table->decimal('price', 7);
+            $table->string('st_plan_id', 255);
+            $table->string('number_app_building', 255)->default(0);
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('plan_plus_apps');
     }
 };

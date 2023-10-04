@@ -10,13 +10,17 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('packs', function (Blueprint $table) {
-            $table->integer('id', true, true)->nullable(false)->index();
-            $table->string('name')->nullable();
+        Schema::create('plans', function (Blueprint $table) {
+
+            $table->id();
+            $table->string('name')->unique();
             $table->string('avatar')->nullable();
-            $table->integer('coust')->nullable();
-            $table->integer('descount')->nullable();
-            $table->text('discription')->nullable();
+            $table->decimal('price', 7);
+            $table->string('interval');
+            $table->integer('trial_period_days');
+            $table->string('lookup_key', 255);
+            $table->string('st_plan_id', 255);
+            $table->string('number_app_building', 255)->default(0);
 
             $table->timestamps();
         });

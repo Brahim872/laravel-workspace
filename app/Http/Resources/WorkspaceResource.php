@@ -37,32 +37,39 @@ class WorkspaceResource extends JsonResource
     {
 
         $result = [];
-
+        $isActive = false;
 
         if ($this->isCollect == true) {
 
             foreach ($this->resource as $key => $workspace) {
-
                 $result[] = [
                     'id' => $workspace->id,
                     'slug' => $workspace->slug,
-                    'name' => $workspace->name??null,
-                    'paid_at' => $workspace->paid_at,
+                    'name' => $workspace->name ?? null,
                     'type_user' => User::TYPE_USER[$workspace->pivot->type_user],
                 ];
             }
         } else {
 
+            if (
+                is_null($this->deactivated_at)
+                && !is_null($this->plan_id)
+                && !is_null($this->payment_id
+                    && !is_null($this->count_app_building) || $this->count_app_building == 0
+                )) {
+                $isActive = true;
+            }
+
             $result = [
                 'id' => $this->id,
-//                'slug' => $this->slug,
+                'slug' => $this->slug,
                 'name' => $this->name,
-                'paid_at' => $this->paid_at,
+                'count_app_building' => $this->count_app_building,
                 'type_user' => User::TYPE_USER[$this->typeUser],
-//                'role' => new RoleResource($this->roles->first()),
-                'role' => $this->roles->first()->name??null,
+                'plan' => $this->plans()->first()->name ?? null,
+                'active' => $isActive,
+//                'num' => $isActivate,
             ];
-
         }
         return $result;
     }
