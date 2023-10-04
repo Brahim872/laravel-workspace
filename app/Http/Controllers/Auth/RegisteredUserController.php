@@ -28,9 +28,9 @@ class RegisteredUserController extends Controller
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+           // 'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
         ];
     }
 
@@ -46,7 +46,7 @@ class RegisteredUserController extends Controller
 
 
         $user = User::create([
-            'name' => $request->name,
+            'name' => explode('@',$request->email)[0],
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

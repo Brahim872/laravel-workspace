@@ -68,6 +68,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
     Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout']);
 
+
     Route::post('workspace/{id}/checkout-add-apps/{plan}', [PaymentAddAppsBuildingStripeController::class, 'checkout']);
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -76,7 +77,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
     Route::post('/workspace', [WorkspaceController::class, 'store'])
         ->name('workspace.store');
 
-    Route::post('/plan', [PlanController::class, 'store']);
+//    Route::post('/plan', [PlanController::class, 'store']);
 
     Route::post('/workspaces', [WorkspaceController::class, 'index'])
         ->name('workspace.index');
@@ -98,6 +99,11 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
         ->name('changeAvatar');
 
 
+
+
+    Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout']);
+
+
 //workspace
     Route::middleware(['hasWorkspace'])->prefix('/workspace/{id}')->group(function () {
 
@@ -109,8 +115,8 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
             ->name('workspace.update');
 
 
-        Route::post('plan-workspace', [PlanController::class, 'store'])
-            ->name('plan.workspace');
+//        Route::post('plan-workspace', [PlanController::class, 'store'])
+//            ->name('plan.workspace');
 
 
         Route::post('charts-apps', [AppsController::class, 'index'])
@@ -120,6 +126,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
         Route::post('/create-app', [AppBuildingController::class, 'store'])
             ->middleware(['EnsureHaveAppsToBuilding', 'checkPlan:plan_one'])
             ->name('create.app.store');
+
 
     });
 });

@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
-use App\Models\Plan;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
-use Stripe\Stripe;
+use Stripe\Checkout\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PaymentStripeController extends Controller
 {
+
 
     public function checkout(Request $request, $id, $plan_id)
     {
@@ -20,14 +20,18 @@ class PaymentStripeController extends Controller
         try {
 
             $plan = Plan::find($plan_id);
+
             \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
+
 
             $lineItems = [[
                 'price' => $plan->st_plan_id,
                 'quantity' => 1,
             ]];
 
+
             $session = \Stripe\Checkout\Session::create([
+
                 'payment_method_types' => ['card'],
                 // 'phone_number_collection' => [
                 //     'enabled' => true,
@@ -59,7 +63,8 @@ class PaymentStripeController extends Controller
                 'url' => $session->url
             ]);
         } catch (\Throwable $e) {
-           return returnResponseJson([
+
+            return returnResponseJson([
                 "message" => $e->getMessage(),
                 "Line" => $e->getLine()
             ], 500);
