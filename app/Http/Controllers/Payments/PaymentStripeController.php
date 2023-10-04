@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Payments;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Plan;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PaymentStripeController extends Controller
@@ -17,11 +19,18 @@ class PaymentStripeController extends Controller
     public function checkout(Request $request, $id, $plan_id)
     {
 
+
         try {
 
             $plan = Plan::find($plan_id);
 
             \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
+
+            if (!$plan) {
+                return returnResponseJson([
+                    "message" => "doesn't have that plan please choose other from plans",
+                ], Response::HTTP_NOT_FOUND);
+            }
 
 
             $lineItems = [[

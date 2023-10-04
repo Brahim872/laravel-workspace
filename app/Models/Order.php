@@ -9,30 +9,30 @@ class Order extends Model
 {
     use HasFactory;
 
-    /**
-     * @var mixed
-     */
-    public $user_id;
-    /**
-     * @var mixed
-     */
-    public $workspace_id;
-    /**
-     * @var mixed|string
-     */
-    public $session_id;
-    /**
-     * @var mixed|string
-     */
-    public $order_type;
-    /**
-     * @var mixed
-     */
-    public $total_price;
-    /**
-     * @var mixed|string
-     */
-    public $status;
+//    /**
+//     * @var mixed
+//     */
+//    public $user_id;
+//    /**
+//     * @var mixed
+//     */
+//    public $workspace_id;
+//    /**
+//     * @var mixed|string
+//     */
+//    public $session_id;
+//    /**
+//     * @var mixed|string
+//     */
+//    public $order_type;
+//    /**
+//     * @var mixed
+//     */
+//    public $total_price;
+//    /**
+//     * @var mixed|string
+//     */
+//    public $status;
 
 
 

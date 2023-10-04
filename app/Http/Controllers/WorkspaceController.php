@@ -62,8 +62,8 @@ class WorkspaceController extends Controller
             'name' => $request->name,
         ]);
 
-//        $plan = Plan::find(1);
-//        $model->plans()->associate($plan)->save();
+        $plan = Plan::find(1);
+        $model->plans()->associate($plan)->save();
 
 
         $model->users()->detach();

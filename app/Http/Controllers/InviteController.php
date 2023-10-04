@@ -6,7 +6,6 @@ use App\Models\Invite;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Notifications\InvitationEmail;
-use App\Traits\Models\HasWorkspace;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

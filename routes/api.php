@@ -66,8 +66,6 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
     Route::post('/plans', [PlanController::class, 'index']);
 
-    Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout']);
-
 
     Route::post('workspace/{id}/checkout-add-apps/{plan}', [PaymentAddAppsBuildingStripeController::class, 'checkout']);
 
@@ -101,7 +99,8 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
 
 
-    Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout']);
+    Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout'])
+        ->middleware(['hasWorkspace:current|id']);
 
 
 //workspace
