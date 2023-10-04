@@ -64,25 +64,15 @@ Route::middleware(['guest', 'throttle:6,1'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
-    Route::post('/plans', [PlanController::class, 'index']);
-
-
-    Route::post('workspace/{id}/checkout-add-apps/{plan}', [PaymentAddAppsBuildingStripeController::class, 'checkout']);
 
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 
-    Route::post('/workspace', [WorkspaceController::class, 'store'])
-        ->name('workspace.store');
 
-//    Route::post('/plan', [PlanController::class, 'store']);
+    Route::post('/plans', [PlanController::class, 'index']);
 
-    Route::post('/workspaces', [WorkspaceController::class, 'index'])
-        ->name('workspace.index');
 
-    Route::post('switch-workspace', [WorkspaceController::class, 'change'])
-        ->middleware(['hasWorkspace:current'])
-        ->name('workspace.change');
+    Route::post('workspace/{id}/checkout-add-apps/{plan}', [PaymentAddAppsBuildingStripeController::class, 'checkout']);
 
     Route::post('accept-invitation', [InviteController::class, 'accept'])
         ->name('acceptInvitation');
@@ -98,34 +88,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
 
 
-
-    Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout'])
-        ->middleware(['hasWorkspace:current|id']);
-
-
 //workspace
-    Route::middleware(['hasWorkspace'])->prefix('/workspace/{id}')->group(function () {
+require __DIR__.'/api/workspace.php';
 
-        Route::post('send-invitation', [InviteController::class, 'store'])
-            ->name('storeInvitation');
-
-
-        Route::post('modify-workspace', [WorkspaceController::class, 'update'])
-            ->name('workspace.update');
-
-
-//        Route::post('plan-workspace', [PlanController::class, 'store'])
-//            ->name('plan.workspace');
-
-
-        Route::post('charts-apps', [AppsController::class, 'index'])
-            ->name('charts.apps');
-
-
-        Route::post('/create-app', [AppBuildingController::class, 'store'])
-            ->middleware(['EnsureHaveAppsToBuilding', 'checkPlan:plan_one'])
-            ->name('create.app.store');
-
-
-    });
 });

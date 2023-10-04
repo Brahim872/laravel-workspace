@@ -32,7 +32,7 @@ class VerifyEmailController extends Controller
         }
 
         return redirect()->intended(
-            config('app.frontend_url').'?verified=1'
+            config('app.   ').'?verified=1'
         );
     }
 }

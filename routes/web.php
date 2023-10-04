@@ -17,12 +17,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return '<a href="/auth/google">google</a>';
+    return '<a href="/auth/google">google</a> '.' | <a href="/documentation">documentation</a>';
+});
+Route::get('documentation', function () {
+    return view('documentation');
 });
 
+Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
 
-//Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
-//Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
+Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
 
 Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
     ->name('checkout.success');
@@ -30,14 +33,11 @@ Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
 Route::get('/checkout/cancel', [PaymentStripeController::class, 'cancel'])
     ->name('checkout.cancel');
 
-
 Route::get('/checkout-add-app/success', [PaymentAddAppsBuildingStripeController::class, 'success'])
     ->name('checkout.add.app.success');
 
 Route::get('/checkout-add-app/cancel', [PaymentAddAppsBuildingStripeController::class, 'cancel'])
     ->name('checkout.add.app.cancel');
-
-
 
 //require __DIR__.'/auth.php';
 
