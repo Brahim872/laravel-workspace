@@ -31,18 +31,16 @@ class hasWorkspace
         $getCurrentWorkspace = returnUserApi()->getCurrentWorkspace();
 
 
-
-        if (in_array("id", $_functions) == true || is_null($functions)) {
-
-
-            if ($getCurrentWorkspace->id != $workspaceId) {
-                return returnResponseJson(['message' => 'you must choose a current workspace [' . $getCurrentWorkspace->id . ']'], Response::HTTP_FORBIDDEN);
-            }
-        }
-
         if (in_array("current", $_functions) == true || is_null($functions)) {
             if (returnUserApi() && !$getCurrentWorkspace) {
                 return returnResponseJson(['message' => 'you must have a workspace'], Response::HTTP_FORBIDDEN);
+            }
+        }
+
+
+        if (in_array("id", $_functions) == true || is_null($functions)) {
+            if ($getCurrentWorkspace->id != $workspaceId) {
+                return returnResponseJson(['message' => 'you must choose a current workspace [' . $getCurrentWorkspace->id . ']'], Response::HTTP_FORBIDDEN);
             }
         }
 

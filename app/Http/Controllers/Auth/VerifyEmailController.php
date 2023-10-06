@@ -30,9 +30,8 @@ class VerifyEmailController extends Controller
         if ($user->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
-
         return redirect()->intended(
-            config('app.   ').'?verified=1'
+            config('app.frontend_url').'?verified=1'
         );
     }
 }

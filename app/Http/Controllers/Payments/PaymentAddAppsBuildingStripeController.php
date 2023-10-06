@@ -20,7 +20,7 @@ class PaymentAddAppsBuildingStripeController extends Controller
         try {
 
             $plan = PlanPlusApp::find($plan_id);
-            \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
             $lineItems = [[
                 'price_data' => [
@@ -72,7 +72,7 @@ class PaymentAddAppsBuildingStripeController extends Controller
 
 
 
-        $stripe = new \Stripe\StripeClient(config('app.stripe_secret'));
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
         $sessionId = $request->get('session_id');
         $planId = $request->get('plan');
         try {

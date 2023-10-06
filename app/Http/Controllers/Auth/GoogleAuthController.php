@@ -60,17 +60,13 @@ class GoogleAuthController extends Controller
                     $user->markEmailAsVerified();
                     $token = $user->createToken('auth-token')->plainTextToken;
 
-                    return returnResponseJson([
-                        'user' => new UserResource($user, $token),
-                    ], Response::HTTP_OK);
-
+                    return redirect(env('FRONTEND_URL').'/auth/login?token='.$token);
                 }
 
             });
         } catch (Exception $e) {
-            dd($e->getMessage());
+            return returnResponseJson(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
 
     }
 }

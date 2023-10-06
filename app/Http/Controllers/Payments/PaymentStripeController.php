@@ -24,7 +24,10 @@ class PaymentStripeController extends Controller
 
             $plan = Plan::find($plan_id);
 
-            \Stripe\Stripe::setApiKey(config('app.stripe_secret'));
+
+
+
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
             if (!$plan) {
                 return returnResponseJson([
@@ -85,7 +88,7 @@ class PaymentStripeController extends Controller
     {
 
 
-        $stripe = new \Stripe\StripeClient(config('app.stripe_secret'));
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
         $sessionId = $request->get('session_id');
         try {
 

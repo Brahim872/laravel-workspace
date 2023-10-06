@@ -70,12 +70,10 @@ class Workspace extends Model
         return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
     }
 
-
     public function plans()
     {
         return $this->belongsTo(Plan::class, 'plan_id');
     }
-
 
     public function appBuildings()
     {

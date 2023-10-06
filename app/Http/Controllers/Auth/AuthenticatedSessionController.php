@@ -57,7 +57,7 @@ class AuthenticatedSessionController extends Controller
             return returnResponseJson(["error" => "That credentials not compatible with data."], Response::HTTP_BAD_REQUEST);
 
         } catch (\Exception $e) {
-            return returnResponseJson(["message" => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return returnResponseJson(["message" => $e->getMessage(),"file" => $e->getFile(),"line" => $e->getLine()], Response::HTTP_BAD_REQUEST);
 
 
         }
