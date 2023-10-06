@@ -35,34 +35,20 @@ class InviteController extends Controller
             $validator = Validator::make($request->all(), $this->rules());
 
             if ($validator->fails()) {
-                return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
+                return returnValidatorFails($validator);
             }
 
-            $workspaceRequest = Workspace::find($workspace);
-
-            if (!returnUserApi()->hasWorkspace($workspaceRequest->id)) {
-                return returnResponseJson([
-                    'message' => 'This workspace does not exist '
-                ], Response::HTTP_BAD_REQUEST);
-            }
-
-            $userWorkspace = $workspaceRequest ? $workspaceRequest->users((string)User::TYPE_USER['0'])->first() : null;
-
-            if (!$workspaceRequest || !$userWorkspace) {
-                return returnResponseJson([
-                    'message' => 'This workspace does not exist '
-                ], Response::HTTP_BAD_REQUEST);
-            }
             $request['workspace'] = $workspace;
             foreach ($request->email as $_email) {
 
                 $user = User::where('email', '=', $_email)->first();
 
-                if ($user && $user->hasWorkspaces()->count()!=0) {
+                if ($user && $user->hasWorkspaces()->count() != 0) {
 
-                    return returnResponseJson(['message' => $user->email.': already has a workspace',
-                        'note' => 'We didn\'t send any invitation. Resolve problem first'], Response::HTTP_BAD_REQUEST);
-
+                    return returnWarningsResponse(['email' => [
+                        $user->email . ': already has a workspace',
+                        'We didn\'t send any invitation. Resolve problem first'],
+                    ]);
                 } else {
                     $invitations[] = new Invite([
                         'email' => $_email,
@@ -72,8 +58,13 @@ class InviteController extends Controller
             }
 
             if ($this->checkInvitation($invitations)[1]) {
-                return returnResponseJson(['message' => 'Already send link to :' . $this->checkInvitation($invitations)[0],
-                    'note' => 'We didn\'t send any invitation. Resolve problem first'], Response::HTTP_BAD_REQUEST);
+
+                return returnWarningsResponse([
+                    'email' => [
+                        'Already send link to :' . $this->checkInvitation($invitations)[0],
+                        'We didn\'t send any invitation. Resolve problem first'
+                    ],
+                ]);
             };
 
 
@@ -85,11 +76,7 @@ class InviteController extends Controller
             }
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-            ], 500);
+            return returnCatchException($e);
         }
     }
 
@@ -130,10 +117,7 @@ class InviteController extends Controller
             return returnResponseJson(['message' => 'accept successful'], 200);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-            ], 500);
+            return returnCatchException($e);
         }
     }
 

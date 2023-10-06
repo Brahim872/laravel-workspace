@@ -41,7 +41,7 @@ class RegisteredUserController extends Controller
 
 
         if ($validator->fails()) {
-            return returnResponseJson(['errors'=>$validator->messages()], Response::HTTP_BAD_REQUEST);
+            return returnValidatorFails($validator);
         }
 
 

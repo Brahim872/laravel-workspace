@@ -37,7 +37,7 @@ class AuthenticatedSessionController extends Controller
             $validator = Validator::make($request->all(), $this->rules());
 
             if ($validator->fails()) {
-                return returnResponseJson(['errors'=>$validator->messages()], Response::HTTP_BAD_REQUEST);
+                return returnValidatorFails($validator);
             }
 
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
@@ -57,9 +57,7 @@ class AuthenticatedSessionController extends Controller
             return returnResponseJson(["error" => "That credentials not compatible with data."], Response::HTTP_BAD_REQUEST);
 
         } catch (\Exception $e) {
-            return returnResponseJson(["message" => $e->getMessage(),"file" => $e->getFile(),"line" => $e->getLine()], Response::HTTP_BAD_REQUEST);
-
-
+            return returnCatchException($e);
         }
     }
 

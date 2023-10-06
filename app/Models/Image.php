@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use App\Traits\LogsActivity;
 
 class Image extends Model
 {
     use HasFactory,
-        LogsActivity;
+        LogsActivity,
+        SoftDeletes;
 
 
     protected $fillable = [

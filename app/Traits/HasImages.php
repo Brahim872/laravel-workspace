@@ -41,13 +41,9 @@ trait HasImages
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'getCode' => $e->getCode(),
-            ], 500);
+            return returnCatchException($e);
         }
     }
-
 
 
     public function updateImage(UploadedFile $file, $folder = 'images', $disk = 'public')
@@ -66,30 +62,27 @@ trait HasImages
 
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'getCode' => $e->getCode(),
-            ], 500);
+            return returnCatchException($e);
         }
     }
 
 
-
     public function changeAvatar($file, $path = 'images')
     {
-        $image = $file;
-        $input['avatar'] = returnUserApi()->id.'-'.today()->timestamp.'-'.uniqid() . '.' . $image->getClientOriginalExtension();
 
-        $destinationPath = storage_path('app/public/'.$path);
+        $image = $file;
+        $input['avatar'] = returnUserApi()->id . '-' . today()->timestamp . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+
+        $destinationPath = storage_path('app/public/' . $path);
 
         if (!file_exists($destinationPath)) {
             mkdir($destinationPath, 0755, true); // The third parameter ensures nested directories are created
         }
-        $pathUrl = $path.'/'.$input['avatar'];
+        $pathUrl = $path . '/' . $input['avatar'];
         $imgFile = (new \Intervention\Image\ImageManager)->make($image->getRealPath());
 
-        $imgFile->resize(150,150)
-            ->save($destinationPath . '/' . $input['avatar'],60);
+        $imgFile->resize(150, 150)
+            ->save($destinationPath . '/' . $input['avatar'], 60);
 
         $model = $this->getModel();
         $model->update(['avatar' => $pathUrl]);
@@ -98,5 +91,17 @@ trait HasImages
             'message' => 'upload success',
         ], Response::HTTP_OK);
 
+    }
+
+
+    public function getAvatarAttribute($attr)
+    {
+        return $attr ? config('app.url') . '/storage/' . $attr : config('app.url') . '/images/default-avatar.png';
+    }
+
+
+    public function getImageAttribute($attr)
+    {
+        return $attr ? config('app.url') . '/storage/' . $attr : config('app.url') . '/images/default-avatar.png';
     }
 }

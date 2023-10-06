@@ -9,6 +9,8 @@ use App\Models\Plan;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session;
+use Stripe\Stripe;
+use Stripe\Subscription;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -19,6 +21,29 @@ class PaymentStripeController extends Controller
     public function checkout(Request $request, $id, $plan_id)
     {
 
+
+
+//// Set your Stripe API key
+//        Stripe::setApiKey(env('STRIPE_SECRET'));
+//
+//// Retrieve the Stripe Customer ID from your database
+//        $stripeCustomerId = 'cs_test_a1FomxMQpJrBq08avSmg54u4TcE2WaOjcSboT6RK8S982umc78mKJ3VTdl';
+//
+//// Retrieve subscriptions for the customer
+//        $subscriptions = Subscription::all([
+//            'customer' => $stripeCustomerId,
+//        ]);
+//
+//// Loop through subscriptions (usually a user will have only one subscription)
+//        foreach ($subscriptions as $subscription) {
+//            $subscriptionStatus = $subscription->status;
+//            // You can also get other subscription details like plan, current_period_end, etc.
+//            // $planId = $subscription->items->data[0]->price->id;
+//            // $currentPeriodEnd = $subscription->current_period_end;
+//        }
+//
+//
+//        dd();
 
         try {
 
@@ -45,44 +70,48 @@ class PaymentStripeController extends Controller
             $session = \Stripe\Checkout\Session::create([
 
                 'payment_method_types' => ['card'],
-                // 'phone_number_collection' => [
-                //     'enabled' => true,
-                // ],
                 'customer_email' => returnUserApi()->email,
                 'line_items' => $lineItems,
                 'mode' => 'subscription',
                 'subscription_data' => [
                     'trial_from_plan' => true,
                 ],
+
                 'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}",
                 'cancel_url' => route('checkout.cancel', [], true),
+
             ]);
 
+//            dd($session);
 
-            $workspace = Workspace::find($id);
-            $workspace->update(['plan_id' => $plan_id]);
-
-            $order = new Order();
-            $order->status = 'unpaid';
-            $order->total_price = $plan->price;
-            $order->order_type = Order::TYPEPLAN['plan'];
-            $order->session_id = $session->id;
-            $order->workspace_id = $id;
-            $order->user_id = returnUserApi()->id;
-            $order->save();
+            $this->saveSubscriptionDetails($id, $plan,$plan_id, $session);
 
             return response()->json([
                 'url' => $session->url
             ]);
         } catch (\Throwable $e) {
 
-            return returnResponseJson([
-                "message" => $e->getMessage(),
-                "Line" => $e->getLine()
-            ], 500);
+          return returnCatchException($e);
         }
 
     }
+
+    private function saveSubscriptionDetails($id, $plan,$plan_id, $session)
+    {
+        $workspace = Workspace::find($id);
+        $workspace->update(['plan_id' => $plan_id]);
+
+        $order = new Order();
+        $order->status = 'unpaid';
+        $order->total_price = $plan->price;
+        $order->order_type = Order::TYPEPLAN['plan'];
+        $order->session_id = $session->id;
+        $order->workspace_id = $id;
+        $order->details = json_encode(["expires_at"=>$session->expires_at,"client_id"=>$session->customer]);
+        $order->user_id = returnUserApi()->id;
+        $order->save();
+    }
+
 
     public function success(Request $request)
     {
@@ -132,7 +161,7 @@ class PaymentStripeController extends Controller
             }
             return redirect()->away('http://127.0.0.1:3000/plans/payment/success');
         } catch (\Exception $e) {
-            throw new NotFoundHttpException();
+            return returnCatchException($e);
         }
     }
 

@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Role;
 use App\Models\User;
 use Carbon\Traits\Date;
 use Illuminate\Database\Seeder;
 Use \Carbon\Carbon;
+
 
 /**
  * UserTableSeeder.
@@ -23,8 +25,6 @@ class UserTableSeeder extends Seeder
             'name' => 'admin admin',
             'email' => 'admin@email.com',
             'password' => 'admin',
-
-//            'role' => 'superadmin',
         ],
 
 
@@ -34,8 +34,7 @@ class UserTableSeeder extends Seeder
     {
         foreach ($this->rows as $row) {
             $user = User::find($row['id']);
-//            $role = $row['role'];
-//            unset($row['role']);
+
             if (!$user) {
                 $user = new User;
                 $user->fill($row);
@@ -45,9 +44,9 @@ class UserTableSeeder extends Seeder
             }
 
             $user->update(['email_verified_at' =>   Carbon::now()]);
-//            $user->roles()->detach();
 
-//            $user->assignRole(Role::where('name', '=', $role)->where('guard_name', '=', "web")->get('name')->first()->name);
+            $user->roles()->detach();
+            $user->assignRole('user');
         }
     }
 

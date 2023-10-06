@@ -23,15 +23,20 @@ class VerifyEmailController extends Controller
 
         if ($user->hasVerifiedEmail()) {
             return redirect()->intended(
-                config('app.frontend_url').'?verified=1'
+                config('app.frontend_url') . '/auth/login?verified=1'
             );
         }
 
         if ($user->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
-        return redirect()->intended(
-            config('app.frontend_url').'?verified=1'
-        );
+
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+        return redirect(env('FRONTEND_URL') . '/auth/login?token=' . $token);
+//
+//        return redirect()->intended(
+//            config('app.frontend_url').'?verified=1'
+//        );
     }
 }

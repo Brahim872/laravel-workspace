@@ -19,11 +19,11 @@ class ProfileResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => config('app.url').'/storage/'.$this->avatar,
+            'avatar' => $this->avatar,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'role' => $this->roles->first()->name??null,
-            'workspace' => $_workspace?new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user):null,
+            'role' => $this->roles->first()->name ?? null,
+            'workspace' => $_workspace ? new WorkspaceResource($_workspace, false, $_workspace->pivot->type_user) : null,
         ];
     }
 }

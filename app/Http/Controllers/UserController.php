@@ -40,10 +40,7 @@ class UserController extends Controller
             return returnResponseJson(['user'=>new ProfileResource(auth('sanctum')->user())], Response::HTTP_OK);;
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'getCode' => $e->getCode(),
-            ], 500);
+            return returnCatchException($e);
         }
 
     }
@@ -51,13 +48,11 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-
-
         try {
             $validator = Validator::make($request->all(), $this->rulesUpdate());
 
             if ($validator->fails()) {
-                return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
+                return returnValidatorFails($validator);
             }
 
             $user = returnUserApi()->update($request->all());
@@ -66,17 +61,13 @@ class UserController extends Controller
             if ($user) {
                 return returnResponseJson([
                     'message' => "update success",
-                    'user' => new UserResource( returnUserApi()),
+                    'user' => new ProfileResource( returnUserApi()),
                 ], Response::HTTP_OK);
             }
+
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'getCode' => $e->getCode(),
-            ], 500);
+            return returnCatchException($e);
         }
-
-
     }
 
 
@@ -88,7 +79,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), $this->rulesAvatar());
 
         if ($validator->fails()) {
-            return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
+            return returnValidatorFails($validator);
         }
 
         return returnUserApi()->changeAvatar($request->file('avatar'),'images/users/avatars');

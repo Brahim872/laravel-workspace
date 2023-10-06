@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmailVerificationNotificationController extends Controller
 {
     /**
      * Send a new email verification notification.
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
@@ -21,16 +22,15 @@ class EmailVerificationNotificationController extends Controller
         $user = User::where('email','=',$request->email)->first();
 
         if(!$user){
-            return returnResponseJson(['message' => 'this email not match'], 400);
+            return returnValidatorFails(['email' => 'this email not match']);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return returnResponseJson(['message' => 'your email already verified'], 400);
+            return returnValidatorFails(['email' => 'your email already verified']);
         }
 
         $user->sendEmailVerificationNotification();
-        return returnResponseJson(['message' => 'verification-link-sent'], 400);
+        return returnResponseJson(['message' => 'verification-link-sent'], Response::HTTP_OK);
 
-//        return response()->json(['status' => 'verification-link-sent']);
     }
 }

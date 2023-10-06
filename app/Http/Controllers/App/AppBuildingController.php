@@ -48,7 +48,7 @@ class AppBuildingController extends Controller
         $validator = Validator::make($request->all(), $this->rules());
 
         if ($validator->fails()) {
-            return returnResponseJson(['errors'=>$validator->messages()], Response::HTTP_BAD_REQUEST);
+            return returnValidatorFails($validator);
         }
 
         $model = AppBuilding::create([

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('workspace_id')->constrained();
             $table->foreignId('payment_id')->nullable()->constrained();
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

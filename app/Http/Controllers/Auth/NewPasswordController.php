@@ -38,7 +38,7 @@ class NewPasswordController extends Controller
         $validator = Validator::make($request->all(), $this->rules());
 
         if ($validator->fails()) {
-            return returnResponseJson(['errors'=>$validator->messages()],Response::HTTP_BAD_REQUEST);
+            return returnValidatorFails($validator);
         }
 
         // Here we will attempt to reset the user's password. If it is successful we
@@ -58,7 +58,7 @@ class NewPasswordController extends Controller
 
 
         if ($status != Password::PASSWORD_RESET) {
-            return returnResponseJson(['email' => __($status)],400);
+            return returnValidatorFails(['email'=>__($status)]);
         }
 
         return returnResponseJson(['message' => __($status)],200);

@@ -13,8 +13,6 @@ class ImageController extends Controller
 
     public function changeAvatar(Request $request){
         try {
-
-
             $user = returnUserApi();
 
             $image = new Image;
@@ -29,9 +27,6 @@ class ImageController extends Controller
 
 
         }catch (\Exception $e){
-            return returnResponseJson([
-                'message'=>$e->getMessage(),
-                'getCode'=>$e->getCode(),
-            ],500);
+            return returnCatchException($e);
         }
     }}

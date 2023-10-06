@@ -45,7 +45,9 @@ class RolesSeeder extends Seeder
                 [
                     'id' => $role['id'],
                     'guard_name' => 'sanctum',
-                    'name' => $role['name']
+                    'display_name' => $role['display_name']??$role['name'],
+                    'name' => $role['name'],
+                    'description' => $role['description']??'---',
                 ]
             );
         }

@@ -33,25 +33,28 @@ class hasWorkspace
 
         if (in_array("current", $_functions) == true || is_null($functions)) {
             if (returnUserApi() && !$getCurrentWorkspace) {
-                return returnResponseJson(['message' => 'you must have a workspace'], Response::HTTP_FORBIDDEN);
+                return returnWarningsResponse(['message' => 'you must have a workspace']);
             }
         }
 
 
         if (in_array("id", $_functions) == true || is_null($functions)) {
             if ($getCurrentWorkspace->id != $workspaceId) {
-                return returnResponseJson(['message' => 'you must choose a current workspace [' . $getCurrentWorkspace->id . ']'], Response::HTTP_FORBIDDEN);
+                return returnWarningsResponse(['message' => 'you must choose a current workspace [' . $getCurrentWorkspace->id . ']']);
             }
         }
 
 
         if (in_array("paid", $_functions) == true || is_null($functions)) {
-            $checkOrderId = Order::where('workspace_id', '=', $workspaceId)
-                ->where('status', '=', 'paid')
-                ->whereNotNull('payment_id')->first();
+            $checkOrderId = true;
+            if ($getCurrentWorkspace->plan_id != 1) {
+                $checkOrderId = Order::where('workspace_id', '=', $workspaceId)
+                    ->where('status', '=', 'paid')
+                    ->whereNotNull('payment_id')->first();
+            }
 
             if (is_null($checkOrderId) || is_null($getCurrentWorkspace->plan_id)) {
-                return returnResponseJson(['message' => 'Your account is unpaid'], Response::HTTP_FORBIDDEN);
+                return returnWarningsResponse(['message' => 'Your account is unpaid']);
             }
         }
 

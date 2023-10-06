@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('st_payment_method', 1024)->nullable();
             $table->string('st_payment_status', 1024)->nullable();
             $table->bigInteger('date')->nullable();
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

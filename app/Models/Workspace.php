@@ -6,6 +6,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use App\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
@@ -13,7 +14,8 @@ use Spatie\Permission\Traits\HasRoles;
 class Workspace extends Model
 {
     use LogsActivity;
-    use HasFactory, Sluggable;
+    use HasFactory, Sluggable,
+        SoftDeletes;
 
 
     protected $guard_name = 'sanctum';

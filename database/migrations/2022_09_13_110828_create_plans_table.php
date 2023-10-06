@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('lookup_key', 255);
             $table->string('st_plan_id', 255);
             $table->string('number_app_building', 255)->default(0);
+            $table->softDeletes();
 
             $table->timestamps();
         });

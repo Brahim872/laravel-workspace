@@ -51,7 +51,7 @@ class WorkspaceController extends Controller
         $validator = Validator::make($request->all(), $this->rules());
 
         if ($validator->fails()) {
-            return returnResponseJson($validator->messages(), Response::HTTP_BAD_REQUEST);
+            return returnValidatorFails($validator);
         }
 
         if (returnUserApi()->hasWorkspaces()->count() >= config('app-sittings.workspace_limit')) {
@@ -103,10 +103,8 @@ class WorkspaceController extends Controller
                 'workspace' => new WorkspaceResource($workspace)
             ], Response::HTTP_OK);
 
-        } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage()
-            ], Response::HTTP_BAD_REQUEST);
+        }catch (\Exception $e) {
+            return returnCatchException($e);
         }
     }
 
@@ -122,10 +120,7 @@ class WorkspaceController extends Controller
                 ], Response::HTTP_OK);
             }
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'line' => $e->getLine()
-            ], Response::HTTP_BAD_REQUEST);
+            return returnCatchException($e);
         }
     }
 }

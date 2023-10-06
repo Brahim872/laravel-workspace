@@ -18,6 +18,8 @@ return new class extends Migration
             $table->decimal('price', 7);
             $table->string('st_plan_id', 255);
             $table->string('number_app_building', 255)->default(0);
+            $table->softDeletes();
+
             $table->timestamps();
         });
     }

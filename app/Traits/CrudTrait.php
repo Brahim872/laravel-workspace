@@ -26,7 +26,6 @@ trait CrudTrait
     public function create()
     {
         $view = $this->getView('backend.' . $this->prefixName . '.form')
-
             ->with('action',route($this->prefixName.'.store'));
 
         return $view;

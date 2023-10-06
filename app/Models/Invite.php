@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
 use App\Traits\LogsActivity;
@@ -11,7 +12,8 @@ use App\Traits\LogsActivity;
 class Invite extends Model
 {
     use HasFactory;
-    use Notifiable;
+    use Notifiable,
+        SoftDeletes;
 
     use LogsActivity;
 

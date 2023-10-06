@@ -24,10 +24,10 @@ class EnsureHaveAppsToBuilding
     {
         $workspaceId = $request->route('id');
         $workspaceCurrent = Workspace::find($workspaceId);
+        $countAppBuilding = $workspaceCurrent->count_app_building;
 
-        if ($workspaceCurrent->count_app_building <= 0) {
-            return returnResponseJson(['message' => 'The number of applications you can build is 0'],
-                Response::HTTP_NOT_FOUND);
+        if ($countAppBuilding <= 0) {
+            return returnValidatorFails(['message' => 'The number of applications you can build is '. $countAppBuilding]);
         }
 
         return $next($request);
