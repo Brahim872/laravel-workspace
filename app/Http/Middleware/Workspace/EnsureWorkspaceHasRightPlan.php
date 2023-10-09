@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\Workspace;
 
 
 use App\Models\Order;
@@ -12,7 +12,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserHasPlan
+class EnsureWorkspaceHasRightPlan
 {
 
 
@@ -32,10 +32,10 @@ class EnsureUserHasPlan
         $workspaceCurrent = returnUserApi()->getCurrentWorkspace();
 
         if (is_null($workspaceCurrent->plans()->whereIn('name', $plans)->first())) {
-            return returnResponseJson([
+            return returnWarningsResponse([
                 'message' => 'You Don\'t have access to this route',
                 'notice' => 'this route just for plan(s) [ '. implode(',',$plans).' ]'
-            ], Response::HTTP_FORBIDDEN);
+            ]);
         }
 
         return $next($request);

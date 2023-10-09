@@ -1,16 +1,12 @@
 <?php
 
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\Workspace;
 
 
 use App\Models\Order;
-use App\Models\User;
 use Carbon\Carbon;
 use Closure;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class hasWorkspace
 {

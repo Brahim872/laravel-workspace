@@ -57,4 +57,17 @@ class Order extends Model
         'details',
         'payment_id',
     ];
+
+
+    public function workspace()
+    {
+        return $this->belongsTo(Workspace::class, 'workspace_id');
+    }
+
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class,'order_id');
+    }
+
 }

@@ -110,7 +110,7 @@ class InviteController extends Controller
             $me->workspaces()->detach();
 
             $me->workspaces()->attach($workspace->id, [
-                'type_user' => 1 // = invite
+                'type_user' => Workspace::ROLE_MEMBER // = invite
             ]);
 
 

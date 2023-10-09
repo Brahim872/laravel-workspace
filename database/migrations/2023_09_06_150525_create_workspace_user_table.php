@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->bigInteger('workspace_id')->unsigned();
-            $table->integer('type_user')->default(0);
+            $table->string('type_user')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade');

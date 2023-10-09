@@ -81,9 +81,9 @@ return [
 
     /**
     |--------------------------------------------------------------------------
-    | Workspace Limit
+    | WorkspaceServices Limit
     |--------------------------------------------------------------------------
-    | Number Workspace of each user
+    | Number WorkspaceServices of each user
     |
      */
 

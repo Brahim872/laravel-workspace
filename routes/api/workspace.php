@@ -32,9 +32,10 @@ Route::post('workspace/{id}/unsubscription/{plan}', [PaymentStripeController::cl
     ->middleware(['hasWorkspace:current|id']);
 
 
-Route::middleware(['hasWorkspace'])->prefix('/workspace/{id}')->group(function () {
+Route::middleware(['workspace.paid'])->prefix('/workspace/{id}')->group(function () {
 
     Route::post('send-invitation', [InviteController::class, 'store'])
+        ->middleware(['checkPlan:plan_one'])
         ->name('storeInvitation');
 
 
@@ -46,7 +47,7 @@ Route::middleware(['hasWorkspace'])->prefix('/workspace/{id}')->group(function (
 
 
     Route::post('/create-app', [AppBuildingController::class, 'store'])
-        ->middleware(['EnsureHaveAppsToBuilding', 'checkPlan:plan_one'])
+        ->middleware(['checkPlan:plan_one','EnsureHaveAppsToBuilding'])
         ->name('create.app.store');
 
 

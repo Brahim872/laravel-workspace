@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Workspace;
+use App\Services\WorkspaceServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Stripe\Checkout\Session;
@@ -198,23 +199,18 @@ class PaymentStripeController extends Controller
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         try {
-            $order = Order::where('workspace_id', '=', $id)
-                ->where('user_id', '=', returnUserApi()->id)
-                ->where('status', '=', 'paid')
-                ->where('order_type', '=', 'subscribe')
-                ->join('payments', 'payments.order_id', 'orders.id')
-                ->first();
+            $workspace = Workspace::find($id);
+            $order = $workspace->orders->first();
 
-
-            $subscription = Subscription::retrieve($order->st_sub_id);
+            $subscription = Subscription::retrieve($order->payments->first()->st_sub_id);
             $canceledSubscription = $subscription->cancel();
 
-            if ($canceledSubscription){
-                $workspace = Workspace::where('id', '=', $order->workspace_id)->first();
-                $workspace->deactivated_at = now();
+            if ($canceledSubscription) {
+                $workspace->status = "unsubscription";
                 $workspace->save();
             }
-//            $canceledSubscriptionId = $canceledSubscription->id;
+
+            $canceledSubscriptionId = $canceledSubscription->id;
 
             return returnResponseJson(['canceledSubscription' => $canceledSubscription], '200');
             // Handle the canceled subscription as needed

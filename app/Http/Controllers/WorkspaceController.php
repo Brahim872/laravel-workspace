@@ -68,12 +68,12 @@ class WorkspaceController extends Controller
 
         $model->users()->detach();
         $model->users()->attach(returnUserApi()->id, [
-            'type_user' => 0 // = admin
+            'type_user' => Workspace::ROLE_OWNER, // = admin
         ]);
 
         auth('sanctum')->user()->update(['current_workspace' => $model->id]);
 
-        return returnResponseJson(['workspace' => new WorkspaceResource($model)], 200);
+        return returnResponseJson(['workspace' => new WorkspaceResource($model,false,Workspace::ROLE_OWNER)], 200);
     }
 
 

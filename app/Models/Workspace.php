@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\WorkspaceServices;
 use App\Traits\Uuid;
+use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,8 +22,14 @@ class Workspace extends Model
 
 //    use Uuid;
 
+
+    public const ROLE_OWNER = 'owner';
+    public const ROLE_MEMBER = 'member';
+
+
     protected $guard_name = 'sanctum';
 
+    protected $isActive = true;
 
     public function sluggable(): array
     {
@@ -39,7 +47,7 @@ class Workspace extends Model
 
 
     protected $fillable = [
-        'name', 'avatar', 'slug', 'deactivated_at', 'payment_id', 'plan_id', 'count_app_building'
+        'name', 'avatar', 'slug', 'deactivated_at', 'plan_id', 'count_app_building'
     ];
 
     /**
@@ -49,25 +57,34 @@ class Workspace extends Model
      */
     public function users($typ = null)
     {
+
         if ($typ != null) {
             return $this->belongsToMany(User::class, 'workspace_user')
-                ->withPivot(['type_user'])->wherePivot('type_user', '=', (int)$typ);
+                ->withPivot(['type_user'])->wherePivot('type_user', '=', $typ);
         }
         return $this->belongsToMany(User::class, 'workspace_user')
             ->withPivot(['type_user']);
     }
 
 
-    /**
-     * The users that belong to the role.
-     * @param null $typ
-     * @return BelongsToMany
-     */
-    public function planPlusApps()
+    public function checkIfWorkspaceActive()
     {
-        return $this->belongsToMany(PlanPlusApp::class, 'workspace_plan_plus_apps');
-    }
 
+        if (!is_null($this->deactivated_at)) {
+            return $this->isActive = false;
+        }
+
+
+        if (is_null($this->orders
+            ->where('status','=','paid')
+            ->where('date_end','>=',Carbon::now())
+            ->where('order_type','=',"subscribe")
+            ->first())){
+            return $this->isActive = false;
+        }
+
+        return $this->isActive;
+    }
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -77,6 +94,12 @@ class Workspace extends Model
     public function plans()
     {
         return $this->belongsTo(Plan::class, 'plan_id');
+    }
+
+
+    public function orders()
+    {
+        return $this->hasMany(order::class,'workspace_id');
     }
 
     public function appBuildings()

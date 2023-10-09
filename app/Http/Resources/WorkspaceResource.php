@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use App\Models\User;
+use App\Models\Workspace;
+use App\Services\WorkspaceServices;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +21,7 @@ class WorkspaceResource extends JsonResource
      */
     private $typeUser;
 
-    public function __construct($resource, $isCollect = false, $typeUser = 0)
+    public function __construct($resource, $isCollect = false, $typeUser = "owner")
     {
         parent::__construct($resource);
         $this->isCollect = $isCollect;
@@ -37,37 +39,28 @@ class WorkspaceResource extends JsonResource
     {
 
         $result = [];
-        $isActive = false;
 
         if ($this->isCollect == true) {
 
             foreach ($this->resource as $key => $workspace) {
+
                 $result[] = [
                     'id' => $workspace->id,
                     'slug' => $workspace->slug,
                     'name' => $workspace->name ?? null,
-                    'type_user' => User::TYPE_USER[$workspace->pivot->type_user],
+                    'type_user' => $workspace->pivot->type_user,
                 ];
             }
         } else {
-
-            if (
-                is_null($this->deactivated_at)
-                && !is_null($this->plan_id)
-                && !is_null($this->payment_id)
-                && (!is_null($this->count_app_building) || $this->count_app_building == 0)
-            ) {
-                $isActive = true;
-            }
-
             $result = [
                 'id' => $this->id,
                 'slug' => $this->slug,
                 'name' => $this->name,
                 'count_app_building' => $this->count_app_building,
-                'type_user' => User::TYPE_USER[$this->typeUser],
+                'type_user' => $this->typeUser,
                 'plan' => $this->plans()->first()->name ?? null,
-                'active' => $isActive,
+                'end_at' => WorkspaceServices::getEndedAtPlan($this),
+                'active' => $this->checkIfWorkspaceActive(),
             ];
         }
         return $result;

@@ -24,4 +24,13 @@ class Payment extends Model
         'st_payment_status',
         'date',
     ];
+
+
+
+
+    public function orders()
+    {
+        return $this->belongsTo(Order::class, 'workspace_id');
+    }
+
 }

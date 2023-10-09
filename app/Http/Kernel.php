@@ -70,15 +70,16 @@ class Kernel extends HttpKernel
 
 
         // main middleware
-        'hasWorkspace' => \App\Http\Middleware\hasWorkspace::class,
+        'workspace.paid' => \App\Http\Middleware\Workspace\EnsureHasWorkspacePaid::class,
+        'checkPlan' => \App\Http\Middleware\Workspace\EnsureWorkspaceHasRightPlan::class,
+        'hasWorkspace' => \App\Http\Middleware\Workspace\hasWorkspace::class,
+
         'EnsureHaveAppsToBuilding' => \App\Http\Middleware\EnsureHaveAppsToBuilding::class,
         'check.token' => \App\Http\Middleware\EnsureNotConnected::class,
-        'checkPlan' => \App\Http\Middleware\EnsureUserHasPlan::class,
 
 
         //route
         'role' => \App\Http\Middleware\RoleMiddleware::class,
-
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'optimizeImages' => \Spatie\LaravelImageOptimizer\Middlewares\OptimizeImages::class,

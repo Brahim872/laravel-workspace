@@ -69,10 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    const TYPE_USER = [
-        0 => "admin",
-        1 => "invite",
-    ];
+
     /**
      * @var mixed
      */
