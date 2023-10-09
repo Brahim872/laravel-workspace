@@ -28,6 +28,10 @@ Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, '
     ->middleware(['hasWorkspace:current|id']);
 
 
+Route::post('workspace/{id}/unsubscription/{plan}', [PaymentStripeController::class, 'unsubscription'])
+    ->middleware(['hasWorkspace:current|id']);
+
+
 Route::middleware(['hasWorkspace'])->prefix('/workspace/{id}')->group(function () {
 
     Route::post('send-invitation', [InviteController::class, 'store'])

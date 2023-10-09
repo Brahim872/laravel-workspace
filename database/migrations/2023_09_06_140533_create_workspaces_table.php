@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->nullable();
             $table->string('name');
-            $table->bigInteger('plan_id')->unsigned()->nullable();
+            $table->foreignId('plan_id')->unsigned()->nullable();
             $table->foreignId('payment_id')->nullable();
             $table->string('avatar')->nullable();
             $table->dateTime('deactivated_at')->nullable();

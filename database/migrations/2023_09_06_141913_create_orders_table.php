@@ -19,9 +19,9 @@ return new class extends Migration
             $table->decimal('total_price', 15, 2);
             $table->string('session_id');
             $table->string('order_type')->nullable();
+            $table->dateTimeTz('date_end')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('workspace_id')->constrained();
-            $table->foreignId('payment_id')->nullable()->constrained();
             $table->softDeletes();
 
             $table->timestamps();

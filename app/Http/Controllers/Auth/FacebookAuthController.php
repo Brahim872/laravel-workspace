@@ -11,19 +11,20 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 
-class GoogleAuthController extends Controller
+class FacebookAuthController extends Controller
 {
 
-    public function redirectToGoogle()
+    public function redirectToFacebook()
     {
 
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('facebook')->redirect();
     }
 
-    public function handleGoogleCallback()
+    public function handleFacebookCallback()
     {
         try {
-            $user = Socialite::driver('google')->stateless()->user();
+            $user = Socialite::driver('facebook')->stateless()->user();
+            // Apply the EnsureNotConnected middleware
 
             $findUser = User::where('email', '=', $user->email)->first();
             if ($findUser && !$findUser->tokens->isEmpty()) {
@@ -31,12 +32,10 @@ class GoogleAuthController extends Controller
 
             }
 
-            $findUser = User::where('email', '=', $user->email)->first();
-
             if ($findUser) {
                 $findUser->update([
                     'social_id' => $user->id,
-                    'social_type' => "google",
+                    'social_type' => "facebook",
                     'ip_address' => request()->ip(),
                     'device' => request()->header('User-Agent'),
                 ]);
@@ -44,15 +43,16 @@ class GoogleAuthController extends Controller
                 auth()->login($findUser);
                 $token = auth()->user()->createToken('auth-token')->plainTextToken;
 
-                $userResource = new UserResource(auth()->user(), $token);
+//                    $userResource = new UserResource(auth()->user(), $token);
 
-                return returnResponseJson(['user' => $userResource], Response::HTTP_OK);
+                return redirect(env('FRONTEND_URL') . '/auth/login?token=' . $token);
+//                    return returnResponseJson(['user' => $userResource], Response::HTTP_OK);
             } else {
                 $user = User::create([
                     'name' => $user->name,
                     'email' => $user->email,
                     'social_id' => $user->id,
-                    'social_type' => "google",
+                    'social_type' => "facebook",
                     'password' => Hash::make($user->email),
                 ]);
 
@@ -63,7 +63,7 @@ class GoogleAuthController extends Controller
             }
 
         } catch (Exception $e) {
-            return returnResponseJson(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return redirect(env('FRONTEND_URL') . '/auth/login?error=' . $e->getMessage());
         }
 
     }

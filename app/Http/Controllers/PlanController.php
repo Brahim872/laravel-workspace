@@ -14,7 +14,7 @@ class PlanController extends Controller
      */
     public function index()
     {
-        $plans = Plan::all();
+        $plans = Plan::where('is_subscription','=',1)->get();
         return returnResponseJson(['plans'=>$plans],Response::HTTP_OK);
     }
 

@@ -54,9 +54,9 @@ class WorkspaceResource extends JsonResource
             if (
                 is_null($this->deactivated_at)
                 && !is_null($this->plan_id)
-                && !is_null($this->payment_id
-                    && !is_null($this->count_app_building) || $this->count_app_building == 0
-                )) {
+                && !is_null($this->payment_id)
+                && (!is_null($this->count_app_building) || $this->count_app_building == 0)
+            ) {
                 $isActive = true;
             }
 
@@ -68,7 +68,6 @@ class WorkspaceResource extends JsonResource
                 'type_user' => User::TYPE_USER[$this->typeUser],
                 'plan' => $this->plans()->first()->name ?? null,
                 'active' => $isActive,
-//                'num' => $isActivate,
             ];
         }
         return $result;

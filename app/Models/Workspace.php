@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class Workspace extends Model
     use HasFactory, Sluggable,
         SoftDeletes;
 
+//    use Uuid;
 
     protected $guard_name = 'sanctum';
 

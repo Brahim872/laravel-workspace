@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class hasWorkspace
 
 
         if (in_array("current", $_functions) == true || is_null($functions)) {
-            if (returnUserApi() && !$getCurrentWorkspace) {
+            if (returnUserApi() && !$getCurrentWorkspace ) {
                 return returnWarningsResponse(['message' => 'you must have a workspace']);
             }
         }
@@ -47,15 +48,22 @@ class hasWorkspace
 
         if (in_array("paid", $_functions) == true || is_null($functions)) {
             $checkOrderId = true;
+
             if ($getCurrentWorkspace->plan_id != 1) {
                 $checkOrderId = Order::where('workspace_id', '=', $workspaceId)
                     ->where('status', '=', 'paid')
-                    ->whereNotNull('payment_id')->first();
+                    ->where('date_end', '>', Carbon::now())
+                    ->whereNotNull('payment_id')
+                    ->first();
             }
 
             if (is_null($checkOrderId) || is_null($getCurrentWorkspace->plan_id)) {
                 return returnWarningsResponse(['message' => 'Your account is unpaid']);
             }
+        }
+
+        if (!is_null($getCurrentWorkspace->deactivated_at)){
+            return returnWarningsResponse(['message' => 'Your account is deactivated']);
         }
 
 

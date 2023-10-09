@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('avatar')->nullable();
             $table->decimal('price', 7);
             $table->string('interval');
+            $table->boolean('is_subscription')->default(true);
             $table->integer('trial_period_days');
             $table->string('lookup_key', 255);
             $table->string('st_plan_id', 255);

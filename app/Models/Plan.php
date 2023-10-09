@@ -20,6 +20,7 @@ class Plan extends Model
         "avatar",
         "price",
         "interval",
+        "is_subscription",
         "trial_period_days",
         "lookup_key",
         "st_plan_id",

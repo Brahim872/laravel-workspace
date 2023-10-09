@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\FacebookAuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
 use App\Http\Controllers\Payments\PaymentStripeController;
+use App\Http\Controllers\Payments\WebhookStripeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,15 +19,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return '<a href="/auth/google">google</a> '.' | <a href="/documentation">documentation</a>';
+    return '<a href="/auth/google">google</a> ' . '<a href="/auth/facebook">facebook</a> ' . ' | <a href="/documentation">documentation</a>';
 });
 Route::get('documentation', function () {
     return view('documentation');
 });
 
-Route::get('auth/google', [GoogleAuthController::class,'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
 
-Route::get('auth/google/callback', [GoogleAuthController::class,'handleGoogleCallback']);
+Route::get('auth/facebook/callback', [FacebookAuthController::class, 'handleFacebookCallback']);
+Route::get('auth/facebook', [FacebookAuthController::class, 'redirectToFacebook'])->name('auth.facebook');
 
 Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
     ->name('checkout.success');
@@ -33,11 +37,8 @@ Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
 Route::get('/checkout/cancel', [PaymentStripeController::class, 'cancel'])
     ->name('checkout.cancel');
 
-Route::get('/checkout-add-app/success', [PaymentAddAppsBuildingStripeController::class, 'success'])
-    ->name('checkout.add.app.success');
-
-Route::get('/checkout-add-app/cancel', [PaymentAddAppsBuildingStripeController::class, 'cancel'])
-    ->name('checkout.add.app.cancel');
+Route::get('/webhook/endpoint', [WebhookStripeController::class, 'webhook'])
+    ->name('checkout.webhook.endpoint');
 
 //require __DIR__.'/auth.php';
 

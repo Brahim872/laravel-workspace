@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,6 +11,7 @@ class Order extends Model
 {
     use HasFactory,
         SoftDeletes;
+//    use Uuid;
 
 //    /**
 //     * @var mixed
@@ -41,17 +43,18 @@ class Order extends Model
 
 
     const TYPEPLAN = [
-        'plan'=>'plan',
-        'add_apps'=>'add apps',
+        'subscribe'=>'subscribe',
+        'purchase'=>'purchase',
     ];
 
     protected $fillable = [
         'status',
         'total_price',
-        'plan_type',
+        'order_type',
         'session_id',
         'workspace_id',
         'user_id',
+        'details',
         'payment_id',
     ];
 }
