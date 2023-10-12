@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
 use App\Http\Controllers\Payments\PaymentStripeController;
+use App\Http\Controllers\Payments\WebhookStripeController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
@@ -87,6 +88,8 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
         ->name('changeAvatar');
 
 
+//    Route::get('/webhook/endpoint', [WebhookStripeController::class, 'webhook'])
+//        ->name('checkout.webhook.endpoint');
 
 //workspace
 require __DIR__.'/api/workspace.php';
