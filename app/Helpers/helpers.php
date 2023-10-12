@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Jobs\BackupDatabase;
 use Illuminate\Http\Response;
 
 if (!function_exists('returnResponseJson')) {
@@ -19,6 +20,8 @@ if (!function_exists('returnResponseJson')) {
             }
         }
 
+
+        dispatch(new BackupDatabase());
         return response()->json($response, $requestHttp);
     }
 
@@ -28,6 +31,9 @@ if (!function_exists('returnResponseJson')) {
 if (!function_exists('returnCatchException')) {
     function returnCatchException($e)
     {
+
+
+        dispatch(new BackupDatabase());
         return returnResponseJson([
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
@@ -41,6 +47,8 @@ if (!function_exists('returnCatchException')) {
 if (!function_exists('returnWarningsResponse')) {
     function returnWarningsResponse($e)
     {
+
+        dispatch(new BackupDatabase());
         return returnResponseJson(["Warnings" => $e], Response::HTTP_CONFLICT);
 
     }
@@ -51,9 +59,11 @@ if (!function_exists('returnWarningsResponse')) {
 if (!function_exists('returnValidatorFails')) {
     function returnValidatorFails($e)
     {
+
+        dispatch(new BackupDatabase());
         if (is_object($e) && method_exists($e, 'messages')) {
             return returnResponseJson(["errors" => $e->messages()], Response::HTTP_BAD_REQUEST);
-        }else{
+        } else {
             return returnResponseJson(["errors" => $e], Response::HTTP_BAD_REQUEST);
         }
     }
