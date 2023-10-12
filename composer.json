@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.0|^8.1",
         "ext-curl": "*",
+        "ext-json": "*",
         "cviebrock/eloquent-sluggable": "^10.0",
         "google/apiclient": "^2.15",
         "guzzlehttp/guzzle": "^7.2",
@@ -21,10 +22,10 @@
         "laravel/tinker": "^2.8",
         "spatie/image-optimizer": "^1.7",
         "spatie/laravel-activitylog": "^4.7",
+        "spatie/laravel-backup": "^8.3",
         "spatie/laravel-image-optimizer": "^1.7",
         "spatie/laravel-permission": "^5.11",
-        "stripe/stripe-php": "^10.0",
-      "ext-json": "*"
+        "stripe/stripe-php": "^10.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
