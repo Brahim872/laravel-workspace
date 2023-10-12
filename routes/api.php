@@ -72,9 +72,6 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
     Route::post('/plans', [PlanController::class, 'index']);
 
-
-    Route::post('workspace/{id}/checkout-add-apps/{plan}', [PaymentAddAppsBuildingStripeController::class, 'checkout']);
-
     Route::post('accept-invitation', [InviteController::class, 'accept'])
         ->name('acceptInvitation');
 
@@ -93,5 +90,6 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
 //workspace
 require __DIR__.'/api/workspace.php';
+require __DIR__.'/api/apps.php';
 
 });
