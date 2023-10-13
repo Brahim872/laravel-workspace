@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('app_boards', function (Blueprint $table) {
             $table->id();
+            $table->foreignId("user_id")->unsigned()->constrained();
             $table->string("name");
             $table->boolean("is_public");
             $table->timestamps();

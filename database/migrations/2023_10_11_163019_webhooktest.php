@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('app_buildings', function (Blueprint $table) {
+        Schema::create('webhooktest', function (Blueprint $table) {
 
             $table->text('details')->nullable();
         });

@@ -20,8 +20,10 @@ if (!function_exists('returnResponseJson')) {
             }
         }
 
-
+if (config("backup.status"))
         dispatch(new BackupDatabase());
+
+
         return response()->json($response, $requestHttp);
     }
 
@@ -33,7 +35,10 @@ if (!function_exists('returnCatchException')) {
     {
 
 
-        dispatch(new BackupDatabase());
+        if (config("backup.status"))
+            dispatch(new BackupDatabase());
+
+
         return returnResponseJson([
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
@@ -48,7 +53,9 @@ if (!function_exists('returnWarningsResponse')) {
     function returnWarningsResponse($e)
     {
 
-        dispatch(new BackupDatabase());
+        if (config("backup.status"))
+            dispatch(new BackupDatabase());
+
         return returnResponseJson(["Warnings" => $e], Response::HTTP_CONFLICT);
 
     }
@@ -60,7 +67,9 @@ if (!function_exists('returnValidatorFails')) {
     function returnValidatorFails($e)
     {
 
-        dispatch(new BackupDatabase());
+        if (config("backup.status"))
+            dispatch(new BackupDatabase());
+
         if (is_object($e) && method_exists($e, 'messages')) {
             return returnResponseJson(["errors" => $e->messages()], Response::HTTP_BAD_REQUEST);
         } else {

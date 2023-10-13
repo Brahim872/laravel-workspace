@@ -122,4 +122,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
     }
+
+
+    public function boards()
+    {
+        return $this->belongsTo(AppBoard::class);
+    }
 }

@@ -1,18 +1,23 @@
 <?php
 
 
+use App\Http\Controllers\App\AppBoardController;
 use App\Http\Controllers\App\AppBuildingController;
-use App\Http\Controllers\AppsController;
+use App\Http\Controllers\App\AppsController;
 
-Route::middleware(['workspace.paid'])->prefix('/workspace/{id}')->group(function () {
+Route::middleware(['workspace.paid','checkPlan:plan_one'])->prefix('/workspace/{id}')->group(function () {
 
 
     Route::post('charts-apps', [AppsController::class, 'index'])
         ->name('charts.apps');
 
 
+    Route::post('add-to-board', [AppBoardController::class, 'store'])
+        ->name('add-to-board.board');
+
+
     Route::post('/create-app', [AppBuildingController::class, 'store'])
-        ->middleware(['checkPlan:plan_one','EnsureHaveAppsToBuilding'])
+        ->middleware(['EnsureHaveAppsToBuilding'])
         ->name('create.app.store');
 
 });

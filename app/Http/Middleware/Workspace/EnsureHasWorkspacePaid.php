@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\Workspace;
 
 
+use App\Models\Workspace;
 use Carbon\Carbon;
 use Closure;
 
@@ -22,6 +23,11 @@ class EnsureHasWorkspacePaid
 
         $workspaceId = $request->route('id');
         $getCurrentWorkspace = returnUserApi()->getCurrentWorkspace();
+
+
+        if (!Workspace::find($workspaceId)){
+            return returnWarningsResponse(['message'=>'dosen\'t this workspace']);
+        }
 
 
         if (returnUserApi() && (!$getCurrentWorkspace || $getCurrentWorkspace->id != $workspaceId)) {
