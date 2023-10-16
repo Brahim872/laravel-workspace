@@ -17,8 +17,16 @@ Route::prefix('/board')->group(function () {
         ->name('store.board');
 
 
+    Route::post('delete', [BoardController::class, 'delete'])
+        ->name('delete.board');
+
+
     Route::post('add-app', [BoardController::class, 'addToBoard'])
         ->name('add-app.board');
+
+
+    Route::post('remove-app', [BoardController::class, 'removeToBoard'])
+        ->name('remove-app.board');
 
 
 });

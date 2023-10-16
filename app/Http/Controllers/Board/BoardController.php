@@ -125,12 +125,82 @@ class BoardController extends Controller
 
             $model = Board::find($request->board_id);
 
-            $model->apps()->detach();
+//            $model->apps()->detach();
             $model->apps()->attach($request->app_id);
 
             if ($model) {
                 return returnResponseJson([
                     'message' => "The app has been saved successfully",
+                ], Response::HTTP_OK);
+            };
+
+        } catch (\Exception $e) {
+            return returnCatchException($e);
+        }
+    }
+
+
+
+
+    /**
+     * Add App To Board.
+     * @param Request $request
+     */
+    public function removeToBoard(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(),
+                [
+                    'board_id' => 'required',
+                    'app_id' => 'required'
+                ]);
+            if ($validator->fails()) {
+                return returnValidatorFails($validator);
+            }
+
+
+            $model = Board::find($request->board_id);
+
+            $model->apps()->detach($request->app_id);
+//            $model->apps()->attach($request->app_id);
+
+            if ($model) {
+                return returnResponseJson([
+                    'message' => "The app has been removed successfully",
+                ], Response::HTTP_OK);
+            };
+
+        } catch (\Exception $e) {
+            return returnCatchException($e);
+        }
+    }
+
+
+
+
+    /**
+     * Add App To Board.
+     * @param Request $request
+     */
+    public function delete(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(),
+                [
+                    'board_id' => 'required',
+                ]);
+            if ($validator->fails()) {
+                return returnValidatorFails($validator);
+            }
+
+
+            $model = Board::find($request->board_id);
+            $model->apps()->detach();
+            $model->delete();
+
+            if ($model) {
+                return returnResponseJson([
+                    'message' => "The board has been removed successfully",
                 ], Response::HTTP_OK);
             };
 
