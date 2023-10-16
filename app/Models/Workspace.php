@@ -107,4 +107,5 @@ class Workspace extends Model
         return $this->belongsTo(AppBuilding::class, 'workspace_id');
     }
 
+
 }

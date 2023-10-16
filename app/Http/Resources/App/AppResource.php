@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Resources;
 
-use Illuminate\Http\Request;
+namespace App\Http\Resources\App;
+
+
+use App\Models\Apps;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Request;
 
-class PackResource extends JsonResource
+class AppResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +17,9 @@ class PackResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
     }
 }

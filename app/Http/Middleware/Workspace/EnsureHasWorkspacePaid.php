@@ -26,7 +26,7 @@ class EnsureHasWorkspacePaid
 
 
         if (!Workspace::find($workspaceId)){
-            return returnWarningsResponse(['message'=>'dosen\'t this workspace']);
+            return returnWarningsResponse(['message'=>'wrong workspace id']);
         }
 
 

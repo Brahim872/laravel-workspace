@@ -1,18 +1,24 @@
 <?php
 
-
-use App\Http\Controllers\App\AppBoardController;
-use App\Http\Controllers\App\AppBuildingController;
+use App\Http\Controllers\Board\BoardController;
 
 Route::prefix('/board')->group(function () {
 
 
-    Route::post('create', [AppBoardController::class, 'store'])
+    Route::post('/', [BoardController::class, 'index'])
+        ->name('index.board');
+
+
+    Route::get('create', [BoardController::class, 'create'])
         ->name('create.board');
 
 
-//    Route::post('/create-app', [AppBuildingController::class, 'store'])
-//        ->middleware(['checkPlan:plan_one','EnsureHaveAppsToBuilding'])
-//        ->name('create.app.store');
+    Route::post('create', [BoardController::class, 'store'])
+        ->name('store.board');
+
+
+    Route::post('add-app', [BoardController::class, 'addToBoard'])
+        ->name('add-app.board');
+
 
 });

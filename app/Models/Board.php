@@ -5,25 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Apps extends Model
+class Board extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-      'name'
+        'name',
+        'user_id',
+        'is_public',
     ];
-    protected $table = "apps";
+
+
+    /**
+     * Get the comments for the blog post.
+     */
+
+    public function users()
+
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * The roles that belong to the user.
      * @param null $typ
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function boards()
+    public function apps()
     {
-        return $this->belongsToMany(Board::class, 'app_boards','board_id','app_id');
+        return $this->belongsToMany(Apps::class, 'app_boards','board_id','app_id');
     }
-
-
 
 }

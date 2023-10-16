@@ -12,8 +12,6 @@ Route::middleware(['workspace.paid','checkPlan:plan_one'])->prefix('/workspace/{
         ->name('charts.apps');
 
 
-    Route::post('add-to-board', [AppBoardController::class, 'store'])
-        ->name('add-to-board.board');
 
 
     Route::post('/create-app', [AppBuildingController::class, 'store'])

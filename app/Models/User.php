@@ -6,6 +6,7 @@ use App\Traits\HasImages;
 use App\Traits\HasWorkspace;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -71,26 +72,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
     /**
-     * @var mixed
-     */
-
-    /**
-     * The roles that belong to the user.
-     * @param null $typ
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function workspaces($typ = null)
-    {
-        if ($typ != null) {
-            return $this->belongsToMany(Workspace::class, 'workspace_user')
-                ->withPivot(['type_user'])->wherePivot('type_user', '=', (int)$typ);
-        }
-
-        return $this->belongsToMany(Workspace::class, 'workspace_user')->withPivot(['type_user']);
-    }
-
-
-    /**
      * get Current workspace.
      */
     public function getCurrentWorkspace()
@@ -126,6 +107,27 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function boards()
     {
-        return $this->belongsTo(AppBoard::class);
+        return $this->hasMany(Board::class);
+    }
+
+
+
+    /**
+     * @var mixed
+     */
+
+    /**
+     * The roles that belong to the user.
+     * @param null $typ
+     * @return BelongsToMany
+     */
+    public function workspaces($typ = null)
+    {
+        if ($typ != null) {
+            return $this->belongsToMany(Workspace::class, 'workspace_user')
+                ->withPivot(['type_user'])->wherePivot('type_user', '=', (int)$typ);
+        }
+
+        return $this->belongsToMany(Workspace::class, 'workspace_user')->withPivot(['type_user']);
     }
 }
