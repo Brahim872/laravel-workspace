@@ -35,7 +35,7 @@ Route::post('workspace/{id}/unsubscription/{plan}', [PaymentStripeController::cl
 Route::middleware(['workspace.paid'])->prefix('/workspace/{id}')->group(function () {
 
     Route::post('send-invitation', [InviteController::class, 'store'])
-        ->middleware(['checkPlan:plan_one'])
+        ->middleware(['checkPlan:plan_one','isOwner'])
         ->name('storeInvitation');
 
 

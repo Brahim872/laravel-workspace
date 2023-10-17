@@ -125,7 +125,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         if ($typ != null) {
             return $this->belongsToMany(Workspace::class, 'workspace_user')
-                ->withPivot(['type_user'])->wherePivot('type_user', '=', (int)$typ);
+                ->withPivot(['type_user'])->wherePivot('type_user', '=', $typ);
         }
 
         return $this->belongsToMany(Workspace::class, 'workspace_user')->withPivot(['type_user']);

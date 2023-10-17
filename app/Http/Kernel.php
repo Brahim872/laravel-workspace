@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'workspace.paid' => \App\Http\Middleware\Workspace\EnsureHasWorkspacePaid::class,
         'checkPlan' => \App\Http\Middleware\Workspace\EnsureWorkspaceHasRightPlan::class,
         'hasWorkspace' => \App\Http\Middleware\Workspace\hasWorkspace::class,
+        'isOwner' => \App\Http\Middleware\Workspace\EnsureIsOwnerWorkspace::class,
 
         'EnsureHaveAppsToBuilding' => \App\Http\Middleware\EnsureHaveAppsToBuilding::class,
         'check.token' => \App\Http\Middleware\EnsureNotConnected::class,
