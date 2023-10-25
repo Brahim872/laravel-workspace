@@ -18,9 +18,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('/', function () {
     return '<a href="/auth/google">google</a> ' . '<a href="/auth/facebook">facebook</a> ' . ' | <a href="/documentation">documentation</a>';
 });
+
 Route::get('documentation', function () {
     return view('documentation');
 });

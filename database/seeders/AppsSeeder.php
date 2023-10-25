@@ -12,7 +12,7 @@ class AppsSeeder extends Seeder
      */
     public function run(): void
     {
-        Apps::factory()->count(50)->create();
+        Apps::factory()->count(50000)->create();
     }
 
 }

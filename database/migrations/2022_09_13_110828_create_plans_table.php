@@ -15,13 +15,15 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->unique();
             $table->string('avatar')->nullable();
-            $table->decimal('price', 7);
-            $table->string('interval');
-            $table->boolean('is_subscription')->default(true);
-            $table->integer('trial_period_days');
+            $table->decimal('price', 7)->default(0);
+            $table->text('description')->nullable();
             $table->string('lookup_key', 255);
             $table->string('st_plan_id', 255);
+            $table->string('interval')->nullable();
+            $table->integer('trial_period_days')->nullable();
             $table->string('number_app_building', 255)->default(0);
+            $table->boolean('is_subscription')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->softDeletes();
 
             $table->timestamps();

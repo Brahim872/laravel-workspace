@@ -19,6 +19,7 @@ class Plan extends Model
         "name",
         "avatar",
         "price",
+        "description",
         "interval",
         "is_subscription",
         "trial_period_days",

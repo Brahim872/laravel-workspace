@@ -34,6 +34,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
+
+
 Route::middleware(['guest', 'throttle:6,1'])->group(function () {
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
@@ -90,5 +92,6 @@ require __DIR__.'/api/workspace.php';
 require __DIR__.'/api/apps.php';
 require __DIR__.'/api/plan.php';
 require __DIR__ . '/api/board.php';
+
 
 });

@@ -14,8 +14,8 @@ class PlanController extends Controller
      */
     public function index()
     {
-        $plans = Plan::where('is_subscription','=',1)->get();
-        return returnResponseJson(['plans'=>$plans],Response::HTTP_OK);
+        $plans = Plan::where('is_subscription', '=', 1)->get();
+        return returnResponseJson(['plans' => $plans], Response::HTTP_OK);
     }
 
     /**
@@ -32,25 +32,25 @@ class PlanController extends Controller
     public function store(Request $request)
     {
         try {
-            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
 
-            $plan = \Stripe\Price::create([
-                'unit_amount' => $request->price * 100,
-                'currency' => 'usd',
-                'recurring' => [
-                    'interval' => $request->interval,
-                    'trial_period_days' => $request->trial_period_days,
+            $plan = $stripe->products->create([
+                'name' => $request->name,
+                'default_price_data' => [
+                    'unit_amount' => $request->price * 100,
+                    'currency' => 'usd',
+                    'recurring' => [
+                        'interval' => $request->interval,
+//                        'trial_period_days' => $request->trial_period_days,
+                    ],
                 ],
-                'lookup_key' => str()->snake($request->name),
-                'transfer_lookup_key' => true,
-                'product_data' => [
-                    'name' => $request->name,
-                ],
+                'expand' => ['default_price'],
             ]);
+
 
             $newPlan = new Plan();
             if ($plan && $plan->active === true) {
-                $newPlan->st_plan_id = $plan->id;
+                $newPlan->st_plan_id = $plan->default_price->id;
                 $newPlan->name = $request->name;
                 $newPlan->price = $request->price;
                 $newPlan->interval = $request->interval;
@@ -60,14 +60,14 @@ class PlanController extends Controller
             }
 
             return returnResponseJson([
-                'plan'=>$newPlan
-            ],Response::HTTP_OK);
+                'plan' => $newPlan
+            ], Response::HTTP_OK);
 
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return returnResponseJson([
-                'message'=>$e->getMessage(),
-                'file'=>$e->getFile()." / ".$e->getLine(),
-            ],Response::HTTP_BAD_REQUEST);
+                'message' => $e->getMessage(),
+                'file' => $e->getFile() . " / " . $e->getLine(),
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -92,7 +92,106 @@ class PlanController extends Controller
      */
     public function update(Request $request, Plan $plan)
     {
-        //
+        try {
+
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+            $price = $stripe->prices->retrieve(
+                $plan->st_plan_id,
+                []);
+
+            if ($request->name || $request->description) {
+                $product = $stripe->products->update($price->product, [
+                    'name' => $request->name,
+                    'description' => $request->description,
+//                    'images' => [ $request->images ],
+                ]);
+            }
+
+            $newPlan = new Plan();
+
+            if (isset($product) && $product->active === true) {
+                $dta = [
+                    'name' => $product->name,
+//                    'images' => $product->images,
+                    'description' => $product->description,
+                    'number_app_building' => $request->number_app_building,
+                ];
+
+
+            }else{
+                $dta = [
+                    'number_app_building' => $request->number_app_building,
+                ];
+
+            }
+            $updatPlan = $newPlan->find($plan->id);
+            $newPlan = $updatPlan->update($dta);
+            return returnResponseJson([
+                'plan' => $updatPlan
+            ], Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            return returnResponseJson([
+                'message' => $e->getMessage(),
+                'file' => $e->getFile() . " / " . $e->getLine(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function priceUpdate(Request $request, Plan $plan)
+    {
+        try {
+
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+
+            $price = $stripe->prices->retrieve(
+                $plan->st_plan_id,
+                []);
+
+            $product = $stripe->products->retrieve($price->product);
+
+            // Create a new price object
+            $_price = $stripe->prices->create([
+                'unit_amount' => $request->price,
+                'currency' => 'usd', // Change to the appropriate currency code
+                'product' => $price->product,
+                'recurring' => [
+                    'interval' => $request->interval, // Change to the appropriate interval (day, week, month, year, etc.)
+                ],
+            ]);
+            $product->default_price = $_price->id;
+            $product->save();
+            $newPlan = new Plan();
+
+            if ($_price && $_price->active === true) {
+                $dta = [
+                    'st_plan_id' => $_price->id,
+                    'price' => $_price->unit_amount,
+                    'interval' => $_price->recurring->interval ?? 0,
+                    'trial_period_days' => $_price->recurring->trial_period_days ?? 0,
+                ];
+                $newPlan->find($plan->id)->update($dta);
+
+                return [$newPlan, $dta];
+            }
+
+            return returnResponseJson([
+                'plan' => $plan
+            ], Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            return returnResponseJson([
+                'message' => $e->getMessage(),
+                'file' => $e->getFile() . " / " . $e->getLine(),
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
     }
 
     /**
