@@ -107,7 +107,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function boards()
     {
-        return $this->hasMany(Board::class);
+        return $this->hasMany(Board::class)->orderByDesc('created_at');
     }
 
 

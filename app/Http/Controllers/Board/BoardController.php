@@ -11,6 +11,7 @@ use App\Models\Apps;
 use App\Models\Board;
 use App\Models\Workspace;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,13 +34,12 @@ class BoardController extends Controller
     {
         try {
             $cacheKey = 'boards';
-            $apps = Cache::remember($cacheKey, 60, function () {
 
+            return Cache::remember($cacheKey, 60, function () {
                 $boards = returnUserApi()->boards;
-
                 return returnResponseJson(['boards' => new BoardListResource($boards)], Response::HTTP_OK);
             });
-            return $apps;
+
         } catch (\Exception $e) {
             return returnCatchException($e);
         }
