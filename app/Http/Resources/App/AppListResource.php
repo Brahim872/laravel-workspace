@@ -24,6 +24,7 @@ class AppListResource extends JsonResource
             $result[] = [
                 'id' => $app->id,
                 'name' => $app->name ?? null,
+                'type' => $app->type ?? null,
                 'inBoard' => $app->boards->count()>0 ?? false,
             ];
         }

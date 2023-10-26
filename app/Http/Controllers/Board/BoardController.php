@@ -32,10 +32,14 @@ class BoardController extends Controller
     public function index()
     {
         try {
-            $boards = returnUserApi()->boards;
+            $cacheKey = 'boards';
+            $apps = Cache::remember($cacheKey, 60, function () {
 
-            return returnResponseJson(['boards' => new BoardListResource($boards)], Response::HTTP_OK);
+                $boards = returnUserApi()->boards;
 
+                return returnResponseJson(['boards' => new BoardListResource($boards)], Response::HTTP_OK);
+            });
+            return $apps;
         } catch (\Exception $e) {
             return returnCatchException($e);
         }
@@ -140,8 +144,6 @@ class BoardController extends Controller
     }
 
 
-
-
     /**
      * Add App To Board.
      * @param Request $request
@@ -174,8 +176,6 @@ class BoardController extends Controller
             return returnCatchException($e);
         }
     }
-
-
 
 
     /**

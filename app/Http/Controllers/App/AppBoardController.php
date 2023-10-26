@@ -7,6 +7,7 @@ use App\Http\Resources\Board\BoardListResource;
 use App\Http\Resources\Board\BoardResource;
 use App\Models\AppBoard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,17 +23,20 @@ class AppBoardController extends Controller
     }
 
 
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         try {
-            $boards = returnUserApi()->boards;
+            $cacheKey = 'apps_board';
+            $apps = Cache::remember('apps_list_' . $cacheKey, 60, function (){
 
-            return returnResponseJson(['boards' => new BoardListResource($boards)], Response::HTTP_OK);
+                $boards = returnUserApi()->boards;
 
+                return returnResponseJson(['boards' => new BoardListResource($boards)], Response::HTTP_OK);
+            });
+            return $apps;
         } catch (\Exception $e) {
             return returnCatchException($e);
         }
@@ -53,7 +57,7 @@ class AppBoardController extends Controller
     public function store(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), $this->rules(),[
+            $validator = Validator::make($request->all(), $this->rules(), [
                 'name.unique' => 'The name has already been for the current user.',
                 'name.required' => 'The name field is required.',
             ]);

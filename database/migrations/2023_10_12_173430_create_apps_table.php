@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('apps', function (Blueprint $table) {
             $table->id();
-            $table->string("name")->nullable();
+            $table->string("name")->nullable()->index();
+            $table->string("type")->nullable()->index();
             $table->timestamps();
 
             $table->index('id');
-            $table->index('name');
         });
     }
 

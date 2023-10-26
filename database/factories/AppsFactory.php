@@ -21,6 +21,7 @@ class AppsFactory extends Factory
     {
         return [
                  'name' => $this->faker->name(),
+                 'type' => $this->faker->colorName(),
         ];
     }
 }
