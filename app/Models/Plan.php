@@ -39,4 +39,10 @@ class Plan extends Model
     {
         return $this->hasMany(Workspace::class,'plan_id');
     }
+
+    public function planFeatures()
+    {
+        return $this->hasMany(PlanFeatures::class)->orderByDesc('created_at');
+    }
+
 }

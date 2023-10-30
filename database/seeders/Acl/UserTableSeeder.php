@@ -1,13 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Acl;
 
-use App\Models\Role;
 use App\Models\User;
-use Carbon\Traits\Date;
+use App\Models\Role;
 use Illuminate\Database\Seeder;
-Use \Carbon\Carbon;
-
 
 /**
  * UserTableSeeder.
@@ -18,14 +15,22 @@ Use \Carbon\Carbon;
 class UserTableSeeder extends Seeder
 {
 
-
     protected $rows = [
         [
             'id' => 1,
-            'name' => 'admin admin',
+            'name' => 'El fatmi Mohamed',
             'email' => 'admin@email.com',
             'password' => 'admin',
+            'role' => 'superadmin',
         ],
+        [
+            'id' => 2,
+            'name' => 'El fatmi Mohamed',
+            'email' => 'develop@email.ma',
+            'password' => 'admin123',
+            'role' => 'user',
+        ],
+
 
 
     ];
@@ -34,7 +39,8 @@ class UserTableSeeder extends Seeder
     {
         foreach ($this->rows as $row) {
             $user = User::find($row['id']);
-
+            $role = $row['role'];
+            unset($row['role']);
             if (!$user) {
                 $user = new User;
                 $user->fill($row);
@@ -42,11 +48,9 @@ class UserTableSeeder extends Seeder
             } else {
                 $user->update($row);
             }
-
-            $user->update(['email_verified_at' =>   Carbon::now()]);
-
             $user->roles()->detach();
-            $user->assignRole('user');
+
+            $user->assignRole(Role::where('name', '=', $role)->where('guard_name', '=', "sanctum")->get('name')->first()->name);
         }
     }
 

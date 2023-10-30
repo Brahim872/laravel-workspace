@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Board\BoardController;
 
-Route::prefix('/board')->group(function () {
+Route::prefix('/boards')->group(function () {
 
 
     Route::post('/', [BoardController::class, 'index'])

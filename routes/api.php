@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\App\AppBuildingController;
-use App\Http\Controllers\AppsController;
+use App\Http\Controllers\Acl\UserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -9,14 +8,10 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
-use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
 use App\Http\Controllers\Payments\SubscriptionPaymentStripeController;
-use App\Http\Controllers\Payments\WebhookStripeController;
-use App\Http\Controllers\PlanController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +23,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::fallback(function () {
+    return returnResponseJson([
+        'message' => 'NOT FOUND.'
+    ], Response::HTTP_NOT_FOUND);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     dd(auth()->guard('sanctum')->check());
@@ -85,15 +85,6 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
         ->name('changeAvatar');
 
 
-//    Route::get('/webhook/endpoint', [WebhookStripeController::class, 'webhook'])
-//        ->name('checkout.webhook.endpoint');
-
-
-//workspace
-require __DIR__.'/api/workspace.php';
-require __DIR__.'/api/apps.php';
-require __DIR__.'/api/plan.php';
-require __DIR__ . '/api/board.php';
-
-
+//    (new App\Helpers\Tools)->includeRoutes('Acl');
+    (new App\Helpers\Tools)->includeRoutes('api');
 });
