@@ -4,7 +4,7 @@
 namespace App\Http\Middleware;
 
 
-use App\Models\Order;
+use App\Models\Subscription;
 use App\Models\User;
 use App\Models\Workspace;
 use Closure;

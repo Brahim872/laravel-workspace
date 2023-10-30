@@ -4,75 +4,115 @@ namespace App\Http\Controllers\Payments;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Subscription;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class WebhookStripeController extends Controller
 {
-    public function webhook(Request $request)
+    public function webHookHandelSubscribers(Request $request)
     {
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
+        // The library needs to be configured with your account's secret key.
+        // Ensure the key is kept out of any version control system you might be using.
+        // This is your Stripe CLI webhook secret for testing your endpoint locally.
 
         $payload = @file_get_contents('php://input');
         $event = null;
 
-        if ($payload !== false) {
-            $jsonPayload = json_decode($payload, true);
-            if ($jsonPayload !== null) {
-                try {
-                    $event = \Stripe\Event::constructFrom($jsonPayload);
-                } catch (\UnexpectedValueException $e) {
-                    // Invalid payload
-                    echo '⚠️  Webhook error while parsing basic request.';
-                    http_response_code(400);
-                    exit();
-                }
-            } else {
-                // Handle JSON decoding failure
-                echo '⚠️  JSON decoding error';
-                http_response_code(400);
-                exit();
-            }
-        } else {
-            // Handle file_get_contents() failure
-            echo '⚠️  Failed to get webhook data';
+        try {
+            $event = \Stripe\Event::constructFrom(
+                json_decode($payload, true)
+            );
+        } catch (\UnexpectedValueException $e) {
+            // Invalid payload
+            echo '⚠️  Webhook error while parsing basic request.';
             http_response_code(400);
             exit();
         }
 
-        if ($endpoint_secret) {
-            $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-            try {
-                $event = \Stripe\Webhook::constructEvent(
-                    $payload, $sig_header, $endpoint_secret
-                );
-            } catch (\Stripe\Exception\SignatureVerificationException $e) {
-                // Invalid signature
-                error_log('Webhook error while validating signature: ' . $e->getMessage());
-                http_response_code(400);
-                exit();
-            }
+        switch ($event->type) {
+            case 'customer.subscription.created':
+                $subscription = $event->data->object;
+
+                DB::table('webhooktest')->insert([
+                    'details' => $subscription->id,
+//                    'type' => "customer.subscription.deleted",
+                ]);
+
+                Subscription::where('st_sub_id',$subscription->id)
+                ->update([
+                    'st_end_at'=> isset($subscription->current_period_end) ? Carbon::createFromTimestamp($subscription->current_period_end) : null,
+                    'st_cus_id'=> $subscription->customer,
+                    'st_sub_id'=> $subscription->id,
+                    'st_total_price'=> $subscription->plan->product,
+                ]);
+
+            case 'customer.subscription.deleted':
+                $subscription = $event->data->object;
+                DB::table('webhooktest')->insert([
+                    'details' => $subscription->id,
+                ]);
+                $order = Subscription::where('st_sub_id',$subscription->id)->update([
+                        'unsubscribed_at' => now(),
+                        'unsubscribe_event_id' => 4,
+                        'st_payment_status' => 'customer.subscription.deleted',
+                    ]);
+
+
+            case 'customer.subscription.paused':
+                $subscription = $event->data->object;
+                Subscription::where('st_sub_id',$subscription->id)
+                    ->update([
+                        'unsubscribed_at'=>now(),
+                        'unsubscribe_event_id'=> 2,
+                        'st_payment_status'=> 'customer.subscription.trial_will_end',
+                    ]);
+
+                DB::table('webhooktest')->insert([
+                    'details' => $subscription,
+                ]);
+
+
+            case 'customer.subscription.pending_update_applied':
+                $subscription = $event->data->object;
+                 DB::table('webhooktest')->insert([
+                    'details' => $subscription,
+//                    'type' => "customer.subscription.pending_update_applied",
+                ]);
+            case 'customer.subscription.pending_update_expired':
+                $subscription = $event->data->object;
+                 DB::table('webhooktest')->insert([
+                    'details' => $subscription,
+//                    'type' => "customer.subscription.pending_update_expired",
+                ]);
+            case 'customer.subscription.resumed':
+                $subscription = $event->data->object;
+                 DB::table('webhooktest')->insert([
+                    'details' => $subscription,
+//                    'type' => "customer.subscription.resumed",
+                ]);
+            case 'customer.subscription.trial_will_end':
+                $subscription = $event->data->object;
+                 DB::table('webhooktest')->insert([
+                    'details' => $subscription,
+//                    'type' => "customer.subscription.trial_will_end",
+                ]);
+            case 'customer.subscription.updated':
+                $subscription = $event->data->object;
+                Subscription::where('st_sub_id',$subscription->id)
+                    ->update([
+                        'unsubscribed_at'=>now(),
+                        'unsubscribe_event_id'=> 2,
+                        'st_payment_status'=> 'customer.subscription.updated',
+                    ]);
+            // ... handle other event types
+            default:
+                echo 'Received unknown event type ' . $event->type;
         }
 
-        // Handle the event
-        switch ($event->type) {
-            case 'payment_intent.succeeded':
-                $paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
-                // Call a method to handle the successful payment intent
-                $this->handlePaymentIntentSucceeded($paymentIntent);
-                break;
-            case 'payment_method.attached':
-                $paymentMethod = $event->data->object; // contains a \Stripe\PaymentMethod
-                // Call a method to handle the successful attachment of a PaymentMethod
-                $this->handlePaymentMethodAttached($paymentMethod);
-                break;
-            default:
-                // Unexpected event type
-                error_log('Received unknown event type: ' . $event->type);
-        }
 
         http_response_code(200);
     }

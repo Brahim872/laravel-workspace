@@ -1,0 +1,197 @@
+{
+    "id": "com.puzzlesgame.cuba22",
+    "name": "Puzzles IV",
+    "installsExact": 125310.0,
+    "store": "play",
+    "published": true,
+    "website": "https://kefir.ads-txt.app",
+    "growth": null,
+    "installs": 100000.0,
+    "image": "https://lh3.googleusercontent.com/9sEDJneZBpy_trfDo4GXK2fM7Wxe4xNCsPCZAAupFt69l4irbUEEbiZ5bYGiW7bDjA",
+    "freeDiff": null,
+    "paidDiff": null,
+    "grossingDiff": null,
+    "newFreeDiff": null,
+    "moversShakersDiff": null,
+    "newPaidDiff": null,
+    "released": "2023-10-14",
+    "ipd": 84064,
+    "type": "GAME",
+    "category": [
+        "Puzzle"
+    ],
+    "screenshots": [
+        {
+            "url": "https://lh3.googleusercontent.com/x54-_v694XR_37N2BJFPwZHCUgw2J60di5JiOPYn8jj-_LRE6zoBTnG_NRcwUW-mLe8",
+            "type": "PORTRAIT",
+            "__typename": "Screenshot"
+        },
+        {
+            "url": "https://lh3.googleusercontent.com/K2Y1HHXtL39wSHFBJb8RZktYypQO30hlGalOkwgPLz974sxaerrwbX4muOgN-wjDUvaz",
+            "type": "PORTRAIT",
+            "__typename": "Screenshot"
+        }
+    ],
+    "lockedFields": [],
+    "collections": [
+        {
+            "id": "newtrending",
+            "name": "Fresh in Top Trending US",
+            "__typename": "Collection"
+        },
+        {
+            "id": "reached50000",
+            "name": "Rapid Revenue Surge",
+            "__typename": "Collection"
+        }
+    ],
+    "developer": {
+        "name": "IAVG GAMES",
+        "total": 4,
+        "installsExact": 614550.0,
+        "installsExactForGuests": 676000.0,
+        "id": "IAVG+GAMES",
+        "__typename": "Dev"
+    },
+    "priority": null,
+    "updated": "2023-10-14",
+    "devCountry": null,
+    "devName": "IAVG GAMES",
+    "__typename": "App",
+    "ratingValue": "4.7",
+    "ratingCount": 1773,
+    "reviewCount": 10,
+    "revenueForGuests": null,
+    "downloadsForGuests": null,
+    "description": "Caracter\u00edsticas de Puzzles IV:<br><br>\u2022 Gr\u00e1ficos ricos.<br>\u2022 Amplia colecci\u00f3n de juegos de l\u00f3gica con acertijos f\u00e1ciles y dif\u00edciles.<br>\u2022 Aumente la capacidad de resoluci\u00f3n l\u00f3gica con juegos de acertijos.<br>\u2022 Emocionantes juegos mentales de c\u00e1lculo.<br>\u2022 Mejora la memoria con este tipo de juegos.<br>\u2022 Combinaci\u00f3n de los mejores juegos tipo puzzles.",
+    "downloads": null,
+    "revenue": null,
+    "removed": null,
+    "crawled": null,
+    "version": "1.0.5",
+    "trailer": null,
+    "feature": "https://lh3.googleusercontent.com/BeORQpzL8UWHBWdZF1Tg-LaMQAu5fJD4ZsnNIoaHLx6UCz_83yI5yJ4ez5KTO8jsm9M-",
+    "ages": null,
+    "size": null,
+    "ads": true,
+    "inapp": null,
+    "similarOutPosition": null,
+    "similarOutApps": [],
+    "similarOut": null,
+    "similarIn": 0,
+    "similarInApps": [],
+    "activeCountries": {
+        "count": 6,
+        "list": [
+            "GT",
+            "HN",
+            "SV",
+            "PA",
+            "BZ",
+            "ES"
+        ],
+        "__typename": "ActiveCountries"
+    },
+    "positions": [
+        {
+            "collection": "Top New Free",
+            "app": "com.puzzlesgame.cuba22",
+            "category": "All",
+            "position": 142,
+            "country": "CR",
+            "platform": null,
+            "__typename": "Value"
+        },
+        {
+            "collection": "Top Trending",
+            "app": "com.puzzlesgame.cuba22",
+            "category": "All",
+            "position": 44,
+            "country": "IS",
+            "platform": null,
+            "__typename": "Value"
+        },
+        {
+            "collection": "Top Trending",
+            "app": "com.puzzlesgame.cuba22",
+            "category": "All",
+            "position": 25,
+            "country": "NI",
+            "platform": null,
+            "__typename": "Value"
+        },
+        {
+            "collection": "Top New Free",
+            "app": "com.puzzlesgame.cuba22",
+            "category": "Puzzle",
+            "position": 43,
+            "country": "NL",
+            "platform": null,
+            "__typename": "Value"
+        },
+        {
+            "collection": "Top Trending",
+            "app": "com.puzzlesgame.cuba22",
+            "category": "Games",
+            "position": 1,
+            "country": "PA",
+            "platform": null,
+            "__typename": "Value"
+        }
+    ],
+    "timeLine": {
+        "changes": [
+            {
+                "app": "com.puzzlesgame.cuba22",
+                "date": "2023-10-17",
+                "field": "ratingValue",
+                "before": "4.8",
+                "after": "4.7",
+                "lang": "en_US",
+                "country": "US",
+                "__typename": "HistoryElement"
+            }
+        ],
+        "fields": [
+            "name",
+            "size",
+            "image",
+            "price",
+            "trailer",
+            "version",
+            "category",
+            "whatsnew",
+            "available",
+            "screenshots",
+            "description",
+            "inapp",
+            "url",
+            "type",
+            "editorial",
+            "developer",
+            "ratingValue",
+            "feature",
+            "wearos",
+            "early",
+            "ads",
+            "lang",
+            "country"
+        ]
+    },
+    "estimates": [
+        {
+            "d": 200000,
+            "r": 0,
+            "date": null,
+            "month": "2022-10-01",
+            "country": null
+        },
+        {
+            "d": 200000,
+            "r": 0,
+            "date": null,
+            "month": "2022-11-01",
+            "country": null
+        }
+    ]
+}

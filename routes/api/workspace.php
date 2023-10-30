@@ -3,7 +3,7 @@
 use App\Http\Controllers\App\AppBuildingController;
 use App\Http\Controllers\AppsController;
 use App\Http\Controllers\InviteController;
-use App\Http\Controllers\Payments\PaymentStripeController;
+use App\Http\Controllers\Payments\SubscriptionPaymentStripeController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,11 +24,12 @@ Route::post('switch-workspace', [WorkspaceController::class, 'change'])
     ->name('workspace.change');
 
 
-Route::post('workspace/{id}/checkout/{plan}', [PaymentStripeController::class, 'checkout'])
+Route::post('workspace/{id}/checkout/{plan}', [SubscriptionPaymentStripeController::class, 'checkout'])
     ->middleware(['hasWorkspace:current|id']);
 
 
-Route::post('workspace/{id}/unsubscription/{plan}', [PaymentStripeController::class, 'unsubscription'])
+
+Route::post('workspace/{id}/unsubscription/{plan}', [SubscriptionPaymentStripeController::class, 'unsubscription'])
     ->middleware(['hasWorkspace:current|id']);
 
 

@@ -4,7 +4,7 @@
 namespace App\Http\Middleware\Workspace;
 
 
-use App\Models\Order;
+use App\Models\Subscription;
 use Carbon\Carbon;
 use Closure;
 
@@ -46,7 +46,7 @@ class hasWorkspace
             $checkOrderId = true;
 
             if ($getCurrentWorkspace->plan_id != 1) {
-                $checkOrderId = Order::where('workspace_id', '=', $workspaceId)
+                $checkOrderId = Subscription::where('workspace_id', '=', $workspaceId)
                     ->where('status', '=', 'paid')
                     ->where('date_end', '>', Carbon::now())
                     ->whereNotNull('payment_id')

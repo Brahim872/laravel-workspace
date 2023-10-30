@@ -3,7 +3,7 @@
 use App\Http\Controllers\Auth\FacebookAuthController;
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
-use App\Http\Controllers\Payments\PaymentStripeController;
+use App\Http\Controllers\Payments\SubscriptionPaymentStripeController;
 use App\Http\Controllers\Payments\WebhookStripeController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,13 +33,13 @@ Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCa
 Route::get('auth/facebook/callback', [FacebookAuthController::class, 'handleFacebookCallback']);
 Route::get('auth/facebook', [FacebookAuthController::class, 'redirectToFacebook'])->name('auth.facebook');
 
-Route::get('/checkout/success', [PaymentStripeController::class, 'success'])
+Route::get('/checkout/success', [SubscriptionPaymentStripeController::class, 'success'])
     ->name('checkout.success');
 
-Route::get('/checkout/cancel', [PaymentStripeController::class, 'cancel'])
+Route::get('/checkout/cancel', [SubscriptionPaymentStripeController::class, 'cancel'])
     ->name('checkout.cancel');
 
-Route::get('/webhook/endpoint', [WebhookStripeController::class, 'webhook'])
+Route::any('/webhook/endpoint', [WebhookStripeController::class, 'webHookHandelSubscribers'])
     ->name('checkout.webhook.endpoint');
 
 //require __DIR__.'/auth.php';

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Payments;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
+use App\Models\Subscription;
 use App\Models\Payment;
 use App\Models\Plan;
 use App\Models\Workspace;
@@ -13,11 +13,10 @@ use Illuminate\Http\Request;
 use Stripe\Checkout\Session;
 use Stripe\Customer;
 use Stripe\Stripe;
-use Stripe\Subscription;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PaymentStripeController extends Controller
+class SubscriptionPaymentStripeController extends Controller
 {
 
     public function checkout(Request $request, $id, $plan_id)
@@ -29,10 +28,9 @@ class PaymentStripeController extends Controller
             $plan = Plan::find($plan_id);
 
             $workspace = Workspace::find($id);
-            $order = Order::where('workspace_id', '=', $workspace->id)
-                ->where('status', '=', 'paid')
-                ->join('payments', 'payments.order_id', '=', 'orders.id')
-                ->count();
+            $order = Subscription::where('workspace_id', '=', $workspace->id)
+                ->whereNull('unsubscribed_at')
+               ;
 
 
             if (!$plan) {
@@ -42,12 +40,19 @@ class PaymentStripeController extends Controller
             }
 
 
-            if ($order > 0) {
-                returnWarningsResponse([
-                    "message" => "you can't repay the plan you already paid",
-                    "notice" => "choose other plan if you need to upgrade your plan"
-                ]);
-            }
+//            if ($order->count() > 0) {
+//                $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+//
+//                $sessionId = $order->where('st_payment_status','paid')->first()->st_session_id ;
+//
+//                $session = $stripe->checkout->sessions->retrieve($sessionId);
+//
+//
+//                return returnWarningsResponse([
+//                    "message" => "you can't repay the plan you already paid",
+//                    "notice" => "choose other plan if you need to upgrade your plan"
+//                ]);
+//            }
 
             Stripe::setApiKey(env('STRIPE_SECRET'));
 
@@ -72,36 +77,36 @@ class PaymentStripeController extends Controller
 
                 ]);
                 $this->saveSubscriptionDetails($workspace, $plan, 'subscribe', $session);
-
-            } else {
-                $lineItems = [[
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'product_data' => [
-                            'name' => $plan->name,
-                        ],
-                        'unit_amount' => $plan->price * 100,
-                    ],
-                    'quantity' => 1,
-                ]];
-
-                $session = \Stripe\Checkout\Session::create([
-                    'customer_email' => returnUserApi()->email,
-                    'line_items' => $lineItems,
-                    'mode' => 'payment',
-                    'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}&plan=" . $plan_id,
-                    'cancel_url' => route('checkout.cancel', [], true),
-                ]);
-
-                $this->saveSubscriptionDetails($workspace, $plan, 'purchase', $session);
             }
+//            else {
+//                $lineItems = [[
+//                    'price_data' => [
+//                        'currency' => 'usd',
+//                        'product_data' => [
+//                            'name' => $plan->name,
+//                        ],
+//                        'unit_amount' => $plan->price * 100,
+//                    ],
+//                    'quantity' => 1,
+//                ]];
+//
+//                $session = \Stripe\Checkout\Session::create([
+//                    'customer_email' => returnUserApi()->email,
+//                    'line_items' => $lineItems,
+//                    'mode' => 'payment',
+//                    'success_url' => route('checkout.success', [], true) . "?session_id={CHECKOUT_SESSION_ID}&plan=" . $plan_id,
+//                    'cancel_url' => route('checkout.cancel', [], true),
+//                ]);
+//
+//                $this->saveSubscriptionDetails($workspace, $plan, 'purchase', $session);
+//            }
 
 
             return response()->json([
                 'url' => $session->url
             ]);
 
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
 
             return returnCatchException($e);
         }
@@ -110,11 +115,10 @@ class PaymentStripeController extends Controller
 
     private function saveSubscriptionDetails($workspace, $plan, $order_type, $session)
     {
-        $order = new Order();
-        $order->status = 'unpaid';
-        $order->total_price = $plan->price;
-        $order->order_type = Order::TYPEPLAN[$order_type];
-        $order->session_id = $session->id;
+        $order = new Subscription();
+        $order->st_payment_status = 'unpaid';
+        $order->st_total_price = $plan->price;
+        $order->st_session_id = $session->id;
         $order->workspace_id = $workspace->id;
         $order->user_id = returnUserApi()->id;
         $order->save();
@@ -124,15 +128,13 @@ class PaymentStripeController extends Controller
     public function success(Request $request)
     {
         try {
-
-
             Stripe::setApiKey(env('STRIPE_SECRET'));
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
             $sessionId = $request->get('session_id');
             $planId = $request->get('plan');
             $plan = Plan::find($planId);
             $session = $stripe->checkout->sessions->retrieve($sessionId);
-            $order = Order::where('session_id', $session->id)->first();
+            $order = Subscription::where('st_session_id', $session->id)->first();
 
 
             if (!$session) {
@@ -146,16 +148,16 @@ class PaymentStripeController extends Controller
                 $currentPeriodEnd = $subscription->current_period_end;
             }
 
-            // Create Payment record
-            $payment = new Payment();
-            $payment->order_id = $order->id;
-            $payment->st_cus_id = $session->customer;
-            $payment->st_sub_id = $session->subscription;
-            $payment->st_payment_intent_id = $session->payment_intent;
-            $payment->st_payment_method = $session->payment_method_types[0];
-            $payment->st_payment_status = $session->payment_status;
-            $payment->date = $session->created;
-            $payment->save();
+            // Create subscriber record
+            // update order status
+            if ($order->st_payment_status === 'unpaid') {
+                $order->st_end_at = isset($currentPeriodEnd) ? Carbon::createFromTimestamp($currentPeriodEnd) : null;
+                $order->st_cus_id = $session->customer;
+                $order->st_sub_id = $session->subscription;
+                $order->st_payment_method = $session->payment_method_types[0];
+                $order->st_payment_status = $session->payment_status;
+                $order->save();
+            }
 
 
             //update in workspace table
@@ -174,18 +176,14 @@ class PaymentStripeController extends Controller
             }
 
 
-            // update order status
-            if ($order->status === 'unpaid') {
-                $order->status = 'paid';
-                $order->date_end = isset($currentPeriodEnd) ? Carbon::createFromTimestamp($currentPeriodEnd) : null;
-                $order->save();
-            }
+
             return redirect()->away('http://127.0.0.1:3000/plans/payment/success');
 
         } catch (\Exception $e) {
             return returnCatchException($e);
         }
     }
+
 
     public function cancel()
     {
@@ -200,25 +198,25 @@ class PaymentStripeController extends Controller
 
         try {
             $workspace = Workspace::find($id);
-            $order = $workspace->orders->first();
+            $order = $workspace->subscriptions->first();
 
-            $subscription = Subscription::retrieve($order->payments->first()->st_sub_id);
+            $subscription = \Stripe\Subscription::retrieve($order->st_sub_id);
             $canceledSubscription = $subscription->cancel();
 
-            if ($canceledSubscription) {
-                $workspace->status = "unsubscription";
-                $workspace->save();
-            }
+//            if ($canceledSubscription) {
+//                $workspace->status = "unsubscription";
+//                $workspace->save();
+//            }
 
-            $canceledSubscriptionId = $canceledSubscription->id;
-
-            return returnResponseJson(['canceledSubscription' => $canceledSubscription], '200');
+//            $canceledSubscriptionId = $canceledSubscription->id;
+//
+//            return returnResponseJson(['canceledSubscription' => $canceledSubscription], '200');
             // Handle the canceled subscription as needed
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             return returnCatchException($e);
             // Handle any errors or exceptions
         }
+
+
     }
-
-
 }

@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\Payments\PaymentAddAppsBuildingStripeController;
-use App\Http\Controllers\Payments\PaymentStripeController;
+use App\Http\Controllers\Payments\SubscriptionPaymentStripeController;
 use App\Http\Controllers\Payments\WebhookStripeController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
@@ -63,6 +63,7 @@ Route::middleware(['guest', 'throttle:6,1'])->group(function () {
 
 
 });
+Route::post('create-checkout', [SubscriptionPaymentStripeController::class, 'checkoutCreate']);
 
 
 Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
@@ -86,6 +87,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 
 //    Route::get('/webhook/endpoint', [WebhookStripeController::class, 'webhook'])
 //        ->name('checkout.webhook.endpoint');
+
 
 //workspace
 require __DIR__.'/api/workspace.php';

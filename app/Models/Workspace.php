@@ -97,9 +97,9 @@ class Workspace extends Model
     }
 
 
-    public function orders()
+    public function subscriptions()
     {
-        return $this->hasMany(order::class,'workspace_id');
+        return $this->hasMany(Subscription::class,'workspace_id');
     }
 
     public function appBuildings()

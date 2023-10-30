@@ -4,7 +4,7 @@
 namespace App\Http\Middleware\Workspace;
 
 
-use App\Models\Order;
+use App\Models\Subscription;
 use App\Models\User;
 use Closure;
 use Illuminate\Cache\RateLimiter;

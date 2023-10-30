@@ -30,7 +30,7 @@ class Payment extends Model
 
     public function orders()
     {
-        return $this->belongsTo(Order::class, 'workspace_id');
+        return $this->belongsTo(Subscription::class, 'workspace_id');
     }
 
 }
