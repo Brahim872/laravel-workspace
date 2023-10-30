@@ -86,4 +86,88 @@ class Tools
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Permits to include some routes files using the parameters
+     *
+     * @param String $dir The path or the dir to the routes directory or the route file to include
+     * @param Boolean $recursive : if true try to read the sub directories and try to include routes files.
+     * @return void
+     */
+    public function includeRoutes($dir = null, $recursive = false)
+    {
+        $path = base_path('routes') . ($dir ? '/' . $dir : '');
+        if (is_dir($path) && $handle = opendir($path)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $filename = $path . '/' . $entry;
+                    if (is_file($filename) && Tools::isCorrectFileExt($entry, array('php'))) {
+                        include_once $filename;
+                    } elseif ($recursive) {
+                        Tools::includeRoutes(($dir ? '/' . $dir . '/' : '') . $entry, $recursive);
+                    }
+                }
+            }
+            closedir($handle);
+        } elseif (is_file($path) && file_exists($path) && Tools::isCorrectFileExt($path, array('php'))) {
+            include_once $path;
+        }
+    }
+
+
+
+
+    public function includeModelUrl($model, $field)
+    {
+
+        $data = $model::get(['id', $field]);
+        $rows = [];
+        foreach ($data as $row) {
+            $rows[$row->id] = $row->{$field};
+        }
+        return $rows;
+    }
+
+
+
+
+
+    /**
+     * Check if file extension is correct
+     *
+     * @param string $filename Real filename
+     * @param array $authorized_extensions
+     * @return bool True if it's correct
+     */
+    public function isCorrectFileExt($filename, $authorized_extensions = null)
+    {
+        if ($authorized_extensions === null) {
+            $authorized_extensions = array('gif', 'jpg', 'jpeg', 'png');
+        }
+
+        $name_explode = explode('.', $filename);
+
+        $count = count($name_explode);
+        if ($count >= 2) {
+            $current_extension = strtolower($name_explode[$count - 1]);
+            if (in_array($current_extension, $authorized_extensions)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
 }

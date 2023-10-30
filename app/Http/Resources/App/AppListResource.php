@@ -20,12 +20,12 @@ class AppListResource extends JsonResource
 
         $result = [];
 
-        foreach ($this->resource as $key => $app) {
+        foreach ($this->resource as $key => $value) {
             $result[] = [
-                'id' => $app->id,
-                'name' => $app->name ?? null,
-                'type' => $app->type ?? null,
-                'inBoard' => $app->boards->count()>0 ?? false,
+                'id' => $value->id,
+                'name' => $value->name ?? null,
+                'type' => $value->type ?? null,
+                'inBoard' => $value->boards->count()>0 ?? false,
             ];
         }
 

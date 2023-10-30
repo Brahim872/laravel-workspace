@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Board;
+namespace App\Http\Resources\Role;
 
 
 use App\Services\WorkspaceServices;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BoardListResource extends JsonResource
+class ListRoleResource extends JsonResource
 {
 
     /**
@@ -24,8 +24,10 @@ class BoardListResource extends JsonResource
         foreach ($this->resource as $key => $value) {
             $result[] = [
                 'id' => $value->id,
-                'user_id' => $value->user_id,
-                'name' => $value->name ?? null,
+                'name' => $value->name,
+                'display_name' => $value->display_name ?? null,
+                'description' => $value->description ?? null,
+                'created_at' => $value->created_at ?? null,
             ];
         }
 

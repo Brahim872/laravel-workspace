@@ -4,8 +4,11 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Intervention\Image\Exception\NotFoundException;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -24,6 +27,14 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+
+
+        if ($exception instanceof ResourceNotFoundException) {
+            return returnResponseJson([
+                'message' => 'NOT FOUND.'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
         if ($exception instanceof ThrottleRequestsException) {
             return returnResponseJson([
                 'message' => 'API rate limit exceeded. Please try again later.'
@@ -34,7 +45,11 @@ class Handler extends ExceptionHandler
                 'message' => 'User is not logged in.'
             ], Response::HTTP_FORBIDDEN);
         }
-
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            return returnResponseJson([
+                'message' => 'method not allowed.'
+            ], Response::HTTP_METHOD_NOT_ALLOWED);
+        }
         return parent::render($request, $exception);
     }
 
