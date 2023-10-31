@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Plan;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Plan\PlanFeaturesResource;
 use App\Models\PlanFeatures;
-use App\Models\Workspace;
+use App\Models\Setting\Setting;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +19,7 @@ class PlanFeaturesController extends Controller
     {
         return [
             'plan_id' => 'required',
-            'label' => 'required',
+            'key' => 'required|unique:plan_features',
             'value' => 'required',
         ];
     }
@@ -26,8 +29,8 @@ class PlanFeaturesController extends Controller
      */
     public function index()
     {
-        $plans = PlanFeatures::get();
-        return returnResponseJson(['plans' => $plans], Response::HTTP_OK);
+        $plansFeatures = PlanFeatures::get();
+        return returnResponseJson(['plans_features' => $plansFeatures], Response::HTTP_OK);
     }
 
     /**
@@ -51,30 +54,27 @@ class PlanFeaturesController extends Controller
                 return returnValidatorFails($validator);
             }
 
-            $permission_plan = PlanFeatures::create([
-               "plan_id"=>$request->plan_id,
-               "key"=>$request->label,
-               "value"=>$request->value,
-               "type"=>$request->type,
-               "description"=>$request->description??null,
+            $plan_features = PlanFeatures::create([
+                "plan_id" => $request->plan_id,
+                "key" => $request->key,
+                "value" => $request->value,
+                "type" => $request->type ?? 'text',
+                "description" => $request->description ?? null,
             ]);
 
             return returnResponseJson([
-                'permissionPlan' => $permission_plan
+                'permissionPlan' => new PlanFeaturesResource($plan_features)
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . " / " . $e->getLine(),
-            ], Response::HTTP_BAD_REQUEST);
+            return returnCatchException($e);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Plan $plan)
+    public function show(PlanFeatures $plan)
     {
         //
     }
@@ -82,60 +82,56 @@ class PlanFeaturesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Plan $plan)
+    public function edit(PlanFeatures $plan)
     {
         //
     }
 
     /**
      * Update the specified resource in storage.
+     * @param Request $request
+     * @param PlanFeatures $planFeatures
+     * @return JsonResponse
      */
-    public function update(Request $request, Plan $plan)
+    public function update(Request $request)
     {
         try {
 
-            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRET'));
+            $attributesPlan = $request->all();
 
-            $price = $stripe->prices->retrieve(
-                $plan->st_plan_id,
-                []);
 
-            if ($request->name || $request->description) {
-                $product = $stripe->products->update($price->product, [
-                    'name' => $request->name,
-                    'description' => $request->description,
-//                    'images' => [ $request->images ],
-                ]);
+            $model = new PlanFeatures();
+
+            foreach ($attributesPlan as $planId => $attributes) {
+                foreach ($attributes as $key => $value) {
+                    if ($key !== '_token' && $key !== 'save') {
+                        if ($request->hasFile($key)) {
+                            Storage::disk('public')->delete('img/' . $value);
+                            $value = $request->file($key)->store($model->path, ['disk' => 'public']);
+                        }
+                        $setting = $model->where('plan_id', $planId)->where('key', $key)->first();
+                        if ($setting) {
+                            $setting->value = $value;
+                            $setting->update();
+                        } else {
+                            $setting = new PlanFeatures();
+                            $setting->fill([
+                                'plan_id' => $planId,
+                                'key' => $key,
+                                'value' => $value
+                            ]);
+                            $setting->save();
+                        }
+                    }
+                }
             }
 
-            $newPlan = new Plan();
-
-            if (isset($product) && $product->active === true) {
-                $dta = [
-                    'name' => $product->name,
-//                    'images' => $product->images,
-                    'description' => $product->description,
-                    'number_app_building' => $request->number_app_building,
-                ];
-
-
-            }else{
-                $dta = [
-                    'number_app_building' => $request->number_app_building,
-                ];
-
-            }
-            $updatPlan = $newPlan->find($plan->id);
-            $newPlan = $updatPlan->update($dta);
             return returnResponseJson([
-                'plan' => $updatPlan
+                'permissionPlan' => new PlanFeaturesResource($plan_features)
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . " / " . $e->getLine(),
-            ], Response::HTTP_BAD_REQUEST);
+            return returnCatchException($e);
         }
 
     }
@@ -144,7 +140,7 @@ class PlanFeaturesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function priceUpdate(Request $request, Plan $plan)
+    public function priceUpdate(Request $request, PlanFeatures $plan)
     {
         try {
 
@@ -167,7 +163,7 @@ class PlanFeaturesController extends Controller
             ]);
             $product->default_price = $_price->id;
             $product->save();
-            $newPlan = new Plan();
+            $newPlanFeatures = new PlanFeatures();
 
             if ($_price && $_price->active === true) {
                 $dta = [
@@ -176,9 +172,9 @@ class PlanFeaturesController extends Controller
                     'interval' => $_price->recurring->interval ?? 0,
                     'trial_period_days' => $_price->recurring->trial_period_days ?? 0,
                 ];
-                $newPlan->find($plan->id)->update($dta);
+                $newPlanFeatures->find($plan->id)->update($dta);
 
-                return [$newPlan, $dta];
+                return [$newPlanFeatures, $dta];
             }
 
             return returnResponseJson([
@@ -186,10 +182,8 @@ class PlanFeaturesController extends Controller
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . " / " . $e->getLine(),
-            ], Response::HTTP_BAD_REQUEST);
+
+            return returnCatchException($e);
         }
 
     }
@@ -197,7 +191,7 @@ class PlanFeaturesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Plan $plan)
+    public function destroy(PlanFeatures $plan)
     {
         //
     }

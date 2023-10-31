@@ -29,7 +29,7 @@ Route::fallback(function () {
     ], Response::HTTP_NOT_FOUND);
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route:: get('/user', function (Request $request) {
     dd(auth()->guard('sanctum')->check());
 });
 

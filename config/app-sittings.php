@@ -1,92 +1,75 @@
 <?php
 
 return [
+    /**
+     * |--------------------------------------------------------------------------
+     * | WorkspaceServices Limit
+     * |--------------------------------------------------------------------------
+     * | Number WorkspaceServices of each user
+     * |
+     */
+
+    'workspace_limit' => env('WORKSPACE_LIMIT', 100),
 
 
     /**
-    |--------------------------------------------------------------------------
-    | User Providers
-    |--------------------------------------------------------------------------
-    | we use items in table roles
-    | Attention : in table roles we store just id and name, id must be unique also in we store it in table packs.
-    | we use table packs as information of the pack
-    |
+     * |--------------------------------------------------------------------------
+     * | Fields of the features
+     * |--------------------------------------------------------------------------
+     * | TODO:features config
+     * |
      */
 
-    'roles' => [
+    'plan_features' => [
         [
-            "id" => 1,
-            "name" => "admin",
+            'key' => 'number_apps_building',
+            'value' => '0',
+            'type' => 'number'
         ],
         [
-            "id" => 2,
-            "name" => "user",
+            'key' => 'number_chart_app',
+            'value' => '10',
+            'type' => 'number'
         ],
         [
-            "id" => 3,
-            "name" => "developer",
+            'key' => 'app_store_display',
+            'value' => 'off',
+            'type' => 'boolean'
         ],
+        [
+            'key' => 'play_store_display',
+            'value' => 'on',
+            'type' => 'boolean'
+        ],
+        'filter' =>
+            [
+                [
+                    'key' => 'MinInstalls',
+                    'value' => 'on',
+                    'type' => 'boolean'
+                ],
+                [
+                    'key' => 'MaxInstalls',
+                    'value' => 'on',
+                    'type' => 'boolean'
+                ],
+                [
+                    'key' => 'MaxInstalls',
+                    'value' => 'on',
+                    'type' => 'boolean'
+                ],
+                [
+                    'key' => 'MinRatings',
+                    'value' => 'on',
+                    'type' => 'boolean'
+                ],
+                [
+                    'key' => 'MaxRatings',
+                    'value' => 'on',
+                    'type' => 'boolean'
+                ],
+            ],
     ],
 
-    'permissions' => [
-        [
-            'name' => 'permission',
-            'category' => 'permission',
-            'access' => [
-                "super-backend" => ["read", "create", "delete"],
-            ]
-        ],
-        [
-            'name' => 'role',
-            'category' => 'permission',
-            'access' => [
-                "super-backend" => ["read", "create", "delete"],
-            ]
-        ],
-        [
-            'name' => 'company',
-            'category' => 'company',
-            'access' => [
-                "super-backend" => ["read", "create", "delete"],
-            ]
-        ],
-        [
-            'name' => 'user',
-            'category' => 'user',
-            'access' => [
-                "super-backend" => ["read", "create", "delete"],
-                "company" => ["read", "create", "delete"],
-            ]
-        ],
-        [
-            'name' => 'contact',
-            'category' => 'contact',
-            'access' => [
-                "super-backend" => ["read", "create", "delete"],
-                "company" => ["read", "create", "delete"],
-            ]
-        ],
-        [
-            'name' => 'campaign',
-            'category' => 'campaign',
-            'access' => [
-                "super-backend" => ["read", "create", "delete"],
-                "company" => ["read", "create", "delete"],
-            ]
-        ],
-    ],
-
-
-
-
-    /**
-    |--------------------------------------------------------------------------
-    | WorkspaceServices Limit
-    |--------------------------------------------------------------------------
-    | Number WorkspaceServices of each user
-    |
-     */
-
-    'workspace_limit'=>env('WORKSPACE_LIMIT', 100)
 
 ];

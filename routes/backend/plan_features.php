@@ -14,7 +14,7 @@
 use App\Http\Controllers\Acl\PermissionController;
 use App\Http\Controllers\Plan\PlanFeaturesController;
 
-Route::group(['prefix' => 'permissions-plans', 'as' => 'permission.plans.'], function () {
+Route::group(['prefix' => 'plan-features', 'as' => 'plan.features'], function () {
 
     Route::post('/', [\App\Http\Controllers\Plan\PlanFeaturesController::class, 'index'])
 //        ->middleware(['permission:backend.permission.read'])
@@ -24,7 +24,7 @@ Route::group(['prefix' => 'permissions-plans', 'as' => 'permission.plans.'], fun
 //        ->middleware(['permission:backend.permission.read'])
         ->name('create');
 
-    Route::post('/update', [PlanFeaturesController::class, 'postIndex'])
+    Route::post('/update', [PlanFeaturesController::class, 'update'])
 //        ->middleware(['permission:backend.permission.update'])
         ->name('update');
 });

@@ -62,8 +62,9 @@ class GoogleAuthController extends Controller
                 return redirect(env('FRONTEND_URL') . '/auth/login?token=' . $token);
             }
 
-        } catch (Exception $e) {
-            return returnResponseJson(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (\Exception $e) {
+
+            returnCatchException($e);
         }
 
     }

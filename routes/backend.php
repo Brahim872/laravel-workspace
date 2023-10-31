@@ -10,4 +10,5 @@ Route::fallback(function () {
     ], Response::HTTP_NOT_FOUND);
 });
 
+
 (new App\Helpers\Tools)->includeRoutes('backend');

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use App\Traits\Validatorable;
+use Spatie\Activitylog\LogOptions;
 
 class Role extends \Spatie\Permission\Models\Role
 {
 
-    use Validatorable;
+    use Validatorable,
+        LogsActivity;
 
 
     /**
@@ -34,5 +37,10 @@ class Role extends \Spatie\Permission\Models\Role
         ];
     }
 
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
+    }
 
 }

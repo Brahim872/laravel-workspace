@@ -64,10 +64,8 @@ class PlanController extends Controller
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . " / " . $e->getLine(),
-            ], Response::HTTP_BAD_REQUEST);
+
+            returnCatchException($e);
         }
     }
 
@@ -132,10 +130,8 @@ class PlanController extends Controller
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . " / " . $e->getLine(),
-            ], Response::HTTP_BAD_REQUEST);
+
+            returnCatchException($e);
         }
 
     }
@@ -186,10 +182,8 @@ class PlanController extends Controller
             ], Response::HTTP_OK);
 
         } catch (\Exception $e) {
-            return returnResponseJson([
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . " / " . $e->getLine(),
-            ], Response::HTTP_BAD_REQUEST);
+
+            returnCatchException($e);
         }
 
     }

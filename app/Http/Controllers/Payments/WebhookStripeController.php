@@ -61,7 +61,6 @@ class WebhookStripeController extends Controller
                         'st_payment_status' => 'customer.subscription.deleted',
                     ]);
 
-
             case 'customer.subscription.paused':
                 $subscription = $event->data->object;
                 Subscription::where('st_sub_id',$subscription->id)
@@ -75,6 +74,13 @@ class WebhookStripeController extends Controller
                     'details' => $subscription,
                 ]);
 
+            case 'customer.subscription.updated':
+                $subscription = $event->data->object;
+                Subscription::where('st_sub_id',$subscription->id)
+                    ->update([
+                        'st_end_at'=> isset($subscription->current_period_end) ? Carbon::createFromTimestamp($subscription->current_period_end) : null,
+                        'st_payment_status'=> 'customer.subscription.updated',
+                    ]);
 
             case 'customer.subscription.pending_update_applied':
                 $subscription = $event->data->object;
@@ -82,33 +88,27 @@ class WebhookStripeController extends Controller
                     'details' => $subscription,
 //                    'type' => "customer.subscription.pending_update_applied",
                 ]);
+
             case 'customer.subscription.pending_update_expired':
                 $subscription = $event->data->object;
                  DB::table('webhooktest')->insert([
                     'details' => $subscription,
 //                    'type' => "customer.subscription.pending_update_expired",
                 ]);
+
             case 'customer.subscription.resumed':
                 $subscription = $event->data->object;
                  DB::table('webhooktest')->insert([
                     'details' => $subscription,
 //                    'type' => "customer.subscription.resumed",
                 ]);
+
             case 'customer.subscription.trial_will_end':
                 $subscription = $event->data->object;
                  DB::table('webhooktest')->insert([
                     'details' => $subscription,
 //                    'type' => "customer.subscription.trial_will_end",
                 ]);
-            case 'customer.subscription.updated':
-                $subscription = $event->data->object;
-                Subscription::where('st_sub_id',$subscription->id)
-                    ->update([
-                        'unsubscribed_at'=>now(),
-                        'unsubscribe_event_id'=> 2,
-                        'st_payment_status'=> 'customer.subscription.updated',
-                    ]);
-            // ... handle other event types
             default:
                 echo 'Received unknown event type ' . $event->type;
         }

@@ -62,7 +62,7 @@ class FacebookAuthController extends Controller
                 return redirect(env('FRONTEND_URL') . '/auth/login?token=' . $token);
             }
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect(env('FRONTEND_URL') . '/auth/login?error=' . $e->getMessage());
         }
 

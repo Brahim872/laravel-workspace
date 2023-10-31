@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
 use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
 
 class Subscription extends Model
 {
     use HasFactory,
-        SoftDeletes;
+        LogsActivity,
+
+    SoftDeletes;
 
 
     protected $table = "subscribers";
@@ -42,6 +46,12 @@ class Subscription extends Model
         return $this->belongsTo(Workspace::class, 'workspace_id');
     }
 
+
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return (new \Spatie\Activitylog\LogOptions)->logFillable()->logOnlyDirty();
+    }
 
 //    public function payments()
 //    {
